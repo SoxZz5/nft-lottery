@@ -11,7 +11,7 @@
   "homepage": "https://github.com/SoxZz5/nft-lottery#readme",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "npx husky install && npm run hook:install",
+    "postinstall": "npx --no-install rimraf .husky && npx husky install && npm run hook:install",
     "hook:install": "node_modules/.bin/husky add .husky/commit-msg \"npx --no-install commitlint --edit $1\"",
     "start:node": "npx hardhat node",
     "prepare": "husky install"
@@ -48,6 +48,7 @@
     "husky": "^7.0.0",
     "prettier": "^2.4.1",
     "prettier-plugin-solidity": "^1.0.0-beta.18",
+    "rimraf": "^3.0.2",
     "solhint": "^3.3.6",
     "solidity-coverage": "^0.7.17",
     "ts-node": "^10.4.0",
