@@ -7,6 +7,7 @@ typechain
 #Hardhat files
 cache
 artifacts
+hardhat/deployments/kovan
 
 #Husky hooks
 .husky
