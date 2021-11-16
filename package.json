@@ -10,13 +10,25 @@
   "license": "MIT",
   "homepage": "https://github.com/SoxZz5/nft-lottery#readme",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:node": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "npx --no-install rimraf .husky && npx husky install && npm run hook:install",
-    "hook:install": "node_modules/.bin/husky add .husky/commit-msg \"npx --no-install commitlint --edit $1\"",
+    "hook:install": "npx --no-install husky add .husky/commit-msg \"npx --no-install commitlint --edit $1\"",
     "start:node": "npx hardhat node",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "serve": "vite preview"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@vitejs/plugin-react": "^1.0.9",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.6",
+    "react-router-dom": "^6.0.2",
+    "react-scripts": "4.0.3",
+    "redux-thunk": "^2.4.0",
+    "web-vitals": "^1.0.1"
+  },
   "devDependencies": {
     "@chainlink/contracts": "^0.2.2",
     "@commitlint/cli": "^13.2.1",
@@ -24,11 +36,17 @@
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-etherscan": "^2.1.7",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
     "@typechain/ethers-v5": "^7.2.0",
     "@typechain/hardhat": "^2.3.1",
     "@types/chai": "^4.2.22",
+    "@types/jest": "^26.0.15",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.11.6",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "chai": "^4.3.4",
@@ -55,11 +73,24 @@
     "solidity-coverage": "^0.7.17",
     "ts-node": "^10.4.0",
     "typechain": "^5.2.0",
-    "typescript": "^4.4.4"
+    "typescript": "^4.4.4",
+    "vite": "^2.6.4"
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
