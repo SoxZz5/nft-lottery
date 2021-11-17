@@ -6,11 +6,7 @@
     "esModuleInterop": false,
     "outDir": "dist",
     "declaration": true,
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": false,
     "skipLibCheck": false,
     "allowSyntheticDefaultImports": true,
@@ -21,12 +17,11 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@/": ["src/*"]
+    }
   },
-  "include": [
-    "src"
-  ],
-  "files": [
-    "./hardhat.config.ts"
-  ]
+  "include": ["src"],
+  "files": ["./hardhat.config.ts"]
 }

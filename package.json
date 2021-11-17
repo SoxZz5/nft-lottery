@@ -20,7 +20,12 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.6.0",
+    "@emotion/styled": "^11.6.0",
+    "@mui/icons-material": "^5.1.1",
+    "@mui/material": "^5.1.1",
     "@vitejs/plugin-react": "^1.0.9",
+    "normalize.css": "^8.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.6",
@@ -74,7 +79,9 @@
     "ts-node": "^10.4.0",
     "typechain": "^5.2.0",
     "typescript": "^4.4.4",
-    "vite": "^2.6.4"
+    "vite": "^2.6.4",
+    "node-sass": "^6.0.1",
+    "sass": "^1.43.4"
   },
   "config": {
     "commitizen": {

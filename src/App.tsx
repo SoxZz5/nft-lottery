@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, RouteObject, useRoutes } from "react-router-dom";
+import NavBar from "./components/nav/NavBar";
 import routes from "./services/routes";
 
 const Router: React.FunctionComponent<{}> = () => {
@@ -13,6 +14,7 @@ const Router: React.FunctionComponent<{}> = () => {
 const App: React.FunctionComponent<{}> = () => {
   return (
     <BrowserRouter>
+      <NavBar />
       <Router />
     </BrowserRouter>
   );
