@@ -10,7 +10,7 @@ import "hardhat-gas-reporter";
 import "solidity-coverage";
 
 // Tasks
-import "./hardhat/tasks/read-price-feed";
+import "./src/hardhat/tasks/read-price-feed";
 
 dotenv.config();
 
