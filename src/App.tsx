@@ -1,7 +1,10 @@
 import React from "react";
-import { BrowserRouter, RouteObject, useRoutes } from "react-router-dom";
+import { BrowserRouter, useRoutes } from "react-router-dom";
 import NavBar from "./components/nav/NavBar";
 import routes from "./services/routes";
+import { Provider } from "react-redux";
+import { store, persistor } from "./services/redux/store";
+//import { PersistGate } from "redux-persist/integration/react";
 
 const Router: React.FunctionComponent<{}> = () => {
   const mappedRoute = routes.map((route: any) => {
@@ -13,10 +16,12 @@ const Router: React.FunctionComponent<{}> = () => {
 
 const App: React.FunctionComponent<{}> = () => {
   return (
-    <BrowserRouter>
-      <NavBar />
-      <Router />
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <NavBar />
+        <Router />
+      </BrowserRouter>
+    </Provider>
   );
 };
 export default App;

@@ -21,7 +21,7 @@ const config: HardhatUserConfig = {
   solidity: "0.8.9",
   networks: {
     kovan: {
-      url: process.env.KOVAN_URL || "",
+      url: process.env.VITE_KOVAN_URL || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
