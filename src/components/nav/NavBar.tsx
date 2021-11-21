@@ -10,13 +10,12 @@ import MenuIcon from "@mui/icons-material/Menu";
 const NavBar: React.FunctionComponent = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="static" color="transparent">
         <Toolbar>
-          <Button color="inherit" sx={{ ml: "auto" }}>
-            Roadmap
-          </Button>
-          <Button color="inherit">Gallery</Button>
-          <Button color="inherit" sx={{ mr: "4rem" }}>
+          <Button sx={{ ml: "4rem" }}>LOGO</Button>
+          <Button sx={{ ml: "auto" }}>Roadmap</Button>
+          <Button sx={{ ml: "2rem" }}>Gallery</Button>
+          <Button variant="outlined" sx={{ ml: "2rem", mr: "4rem" }}>
             Connect Wallet
           </Button>
         </Toolbar>
