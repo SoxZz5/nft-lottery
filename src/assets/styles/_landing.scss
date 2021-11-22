@@ -4,7 +4,42 @@
   position: relative;
 
   &_solar {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
   &_subtitle {
+    position: absolute;
+    bottom: 4rem;
+    display: flex;
+    flex-direction: column;
+    font-style: italic;
+
+    &-text {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      & > * {
+        font-size: 1.5rem !important;
+        word-spacing: 0.25rem;
+      }
+
+      .secondary-text {
+        color: #ff00ff;
+      }
+    }
+  }
+
+  &_countdown {
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: row;
+    font-weight: bold;
+
+    & > * {
+      margin-left: 1rem !important;
+    }
   }
 }

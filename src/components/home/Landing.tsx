@@ -1,15 +1,37 @@
+import Countdown from "../landing/Countdown";
 import * as React from "react";
+import { Typography } from "@mui/material";
 
 const Landing: React.FunctionComponent = () => {
   return (
-    <div className="landing full-height">
+    <div className="landing full-height" id="landing">
       <div className="landing_solar">
-        <h1>Take part of the only one space caritative mission</h1>
-        <span className="landing_solar-counter">27 : 13 : 12 : 43</span>
+        <Typography
+          variant={"h3"}
+          sx={{ mb: "1rem", mt: "-5rem" }}
+          component={"h1"}
+        >
+          Take part of the only one
+          <br /> space caritative mission
+        </Typography>
+        <Countdown />
       </div>
       <div className="landing_subtitle">
-        Craft your own NFT spaceship to participate in the first blockchain
-        charity raffle to save humanity.
+        <div className="landing_subtitle-text">
+          <Typography variant={"subtitle1"} component={"h2"}>
+            Craft your own NFT spaceship to participate in the first
+          </Typography>
+        </div>
+        <div className="landing_subtitle-text">
+          <Typography
+            variant={"subtitle1"}
+            sx={{ ml: "0.75rem" }}
+            component={"h2"}
+          >
+            <span className="secondary-text">blockchain charity raffle </span>
+            to save humanity.
+          </Typography>
+        </div>
       </div>
     </div>
   );
