@@ -7,19 +7,27 @@ import ConnectButton from "./ConnectButton";
 
 const NavBar: React.FunctionComponent = () => {
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" color="transparent">
-        <Toolbar>
-          <Button>LOGO</Button>
-          <Button sx={{ ml: "auto" }}>About</Button>
-          <Button sx={{ ml: "2rem" }}>Mint</Button>
-          <Button sx={{ ml: "2rem" }}>Hangar</Button>
-          <Button sx={{ ml: "2rem" }}>Roadmap</Button>
-          <Button sx={{ ml: "2rem", mr: "2rem" }}>Team</Button>
-          <ConnectButton>Connect Wallet</ConnectButton>
-        </Toolbar>
-      </AppBar>
-    </Box>
+    <AppBar className="main-menu" position="static" color="transparent">
+      <Toolbar>
+        <Button>LOGO</Button>
+        <Button sx={{ ml: "auto" }} href="#lading">
+          About
+        </Button>
+        <Button sx={{ ml: "4rem" }} href="#minter">
+          Mint
+        </Button>
+        <Button sx={{ ml: "4rem" }} href="#hangar">
+          Hangar
+        </Button>
+        <Button sx={{ ml: "4rem" }} href="#roadmap">
+          Roadmap
+        </Button>
+        <Button sx={{ ml: "4rem", mr: "2rem" }} href="#team">
+          Team
+        </Button>
+        <ConnectButton>Connect Wallet</ConnectButton>
+      </Toolbar>
+    </AppBar>
   );
 };
 

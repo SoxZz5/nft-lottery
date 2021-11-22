@@ -1,7 +1,7 @@
 import { ButtonUnstyledProps } from "@mui/core/ButtonUnstyled";
 import { styled } from "@mui/system";
 import React, { useEffect } from "react";
-import { useButton } from "@mui/material";
+import { Button, useButton } from "@mui/material";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
 import { UserState } from "../../services/redux/user/user.interface";
@@ -9,7 +9,7 @@ import * as UserService from "../../services/redux/user/user.action";
 //@ts-ignore
 import { useEthers } from "@usedapp/core";
 
-const CustomButtonRoot = styled("button")`
+const CustomButtonRoot = styled(Button)`
   background-color: #007fff;
   padding: 12px 16px;
   border-radius: 10px;
@@ -81,19 +81,15 @@ const ConnectButton: React.FunctionComponent = () => {
     console.log(connected);
   }
 
-  return (
-    <div>
-      {!connected ? (
-        <CustomButton variant="outlined" onClick={handleConnectWallet}>
-          Connect wallet
-        </CustomButton>
-      ) : (
-        <CustomButton variant="outlined">{`${stateAccount.slice(
-          0,
-          7
-        )}...`}</CustomButton>
-      )}
-    </div>
+  return !connected ? (
+    <CustomButton variant="outlined" onClick={handleConnectWallet}>
+      Connect wallet
+    </CustomButton>
+  ) : (
+    <CustomButton variant="outlined">{`${stateAccount.slice(
+      0,
+      7
+    )}...`}</CustomButton>
   );
 };
 
