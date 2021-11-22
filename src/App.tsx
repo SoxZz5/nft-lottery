@@ -18,7 +18,7 @@ const App: React.FunctionComponent<{}> = () => {
   return (
     <Provider store={store}>
       <BrowserRouter>
-        <NavBar className="main-menu" />
+        <NavBar />
         <Router />
       </BrowserRouter>
     </Provider>

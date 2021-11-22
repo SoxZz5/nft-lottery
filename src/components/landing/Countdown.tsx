@@ -41,9 +41,8 @@ const Countdown: React.FunctionComponent = () => {
     }
 
     timerComponents.push(
-      <Typography variant={"h4"}>
-        {timeLeft[interval]}
-        {interval.slice(0, 1)}
+      <Typography variant={"h4"} color={"white"} fontWeight={"bold"}>
+        {timeLeft[interval]} {interval.slice(0, 1)}
       </Typography>
     );
   });

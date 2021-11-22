@@ -58,7 +58,7 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           boxShadow: "none",
-          position: "absolute",
+          position: "fixed",
           top: "0",
           width: "100%",
           zIndex: "9999",

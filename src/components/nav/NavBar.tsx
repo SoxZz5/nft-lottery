@@ -1,32 +1,62 @@
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Button from "@mui/material/Button";
+import Link from "@mui/material/Link";
 import ConnectButton from "./ConnectButton";
+import { useLocation } from "react-router-dom";
 
 const NavBar: React.FunctionComponent = () => {
+  const location = useLocation();
+  const isActive = (menu: string): any => {
+    if (location.hash === menu) {
+      return "active";
+    }
+    return "";
+  };
   return (
-    <AppBar className="main-menu" position="static" color="transparent">
-      <Toolbar>
-        <Button>LOGO</Button>
-        <Button sx={{ ml: "auto" }} href="#lading">
+    <AppBar className="main-menu" color="transparent">
+      <div className="main-menu_menu">
+        <Link
+          sx={{ ml: "10rem" }}
+          href="#landing"
+          className={`${isActive("#landing")}`}
+          underline="none"
+        >
           About
-        </Button>
-        <Button sx={{ ml: "4rem" }} href="#minter">
+        </Link>
+        <Link
+          sx={{ ml: "4rem" }}
+          href="#minter"
+          className={`${isActive("#minter")}`}
+          underline="none"
+        >
           Mint
-        </Button>
-        <Button sx={{ ml: "4rem" }} href="#hangar">
+        </Link>
+        <Link
+          sx={{ ml: "4rem" }}
+          href="#hangar"
+          className={`${isActive("#hangar")}`}
+          underline="none"
+        >
           Hangar
-        </Button>
-        <Button sx={{ ml: "4rem" }} href="#roadmap">
+        </Link>
+        <Link
+          sx={{ ml: "4rem" }}
+          href="#roadmap"
+          className={`${isActive("#roadmap")}`}
+          underline="none"
+        >
           Roadmap
-        </Button>
-        <Button sx={{ ml: "4rem", mr: "2rem" }} href="#team">
+        </Link>
+        <Link
+          sx={{ ml: "4rem" }}
+          href="#team"
+          className={`${isActive("#team")}`}
+          underline="none"
+        >
           Team
-        </Button>
-        <ConnectButton>Connect Wallet</ConnectButton>
-      </Toolbar>
+        </Link>
+      </div>
+      <ConnectButton>Connect Wallet</ConnectButton>
     </AppBar>
   );
 };

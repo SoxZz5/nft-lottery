@@ -1,0 +1,33 @@
+.main-menu {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center !important;
+  width: 100% !important;
+  padding: 1rem 2rem;
+
+  &_menu {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    & > * {
+      font-family: Orbitron;
+      color: white !important;
+      font-weight: bold !important;
+      font-size: 16px !important;
+      padding: 8px 12px !important;
+
+      &.active {
+        color: #f0f !important;
+        text-shadow: 0 0 24px #f0f;
+      }
+
+      &:hover {
+        color: #f0f !important;
+        text-shadow: 0 0 24px #f0f;
+      }
+    }
+  }
+}

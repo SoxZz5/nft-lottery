@@ -10,18 +10,21 @@ import * as UserService from "../../services/redux/user/user.action";
 import { useEthers } from "@usedapp/core";
 
 const CustomButtonRoot = styled(Button)`
-  background-color: #007fff;
-  padding: 12px 16px;
-  border-radius: 10px;
+  padding: 8px 12px;
   color: #fff;
-  font-weight: 500;
   font-family: Orbitron;
-  text-transform: uppercase;
-  font-size: 0.8rem
+  text-shadow: 0 2px 24px #f0f;
+  font-size: 16px;
+  font-weight: bold;
   transition: all 200ms ease;
   cursor: pointer;
-  box-shadow: 0 4px 20px 0 rgba(61, 71, 82, 0.1), 0 0 0 0 rgba(0, 127, 255, 0);
   border: none;
+  margin-right: 2rem;
+  border-radius: 5px;
+  box-shadow: 0 0 24px 0 #f0f;
+  border: solid 1px #f0f;
+  background-image: linear-gradient(to bottom, #f0f, #36013f);
+  text-transform: capitalize;
 
   &:hover {
     background-color: #0059b2;
@@ -39,7 +42,8 @@ const CustomButtonRoot = styled(Button)`
 
   &.disabled {
     opacity: 0.5;
-    cursor: not-allowed;    box-shadow: 0 0 0 0 rgba(0, 127, 255, 0);
+    cursor: not-allowed;
+    box-shadow: 0 0 0 0 rgba(0, 127, 255, 0);
   }
 `;
 
@@ -75,11 +79,15 @@ const ConnectButton: React.FunctionComponent = () => {
 
   function handleConnectWallet() {
     activateBrowserWallet();
+  }
+
+  useEffect(() => {
     if (account) {
       dispatch(UserService.connect(account));
+    } else {
+      dispatch(UserService.disconnect());
     }
-    console.log(connected);
-  }
+  }, [account]);
 
   return !connected ? (
     <CustomButton variant="outlined" onClick={handleConnectWallet}>
@@ -88,7 +96,7 @@ const ConnectButton: React.FunctionComponent = () => {
   ) : (
     <CustomButton variant="outlined">{`${stateAccount.slice(
       0,
-      7
+      11
     )}...`}</CustomButton>
   );
 };

@@ -7,9 +7,11 @@ const Landing: React.FunctionComponent = () => {
     <div className="landing full-height" id="landing">
       <div className="landing_solar">
         <Typography
-          variant={"h3"}
-          sx={{ mb: "1rem", mt: "-5rem" }}
+          variant={"h4"}
+          sx={{ mb: "1rem", mt: "2rem" }}
           component={"h1"}
+          color={"white"}
+          fontWeight={"bold"}
         >
           Take part of the only one
           <br /> space caritative mission
@@ -18,7 +20,7 @@ const Landing: React.FunctionComponent = () => {
       </div>
       <div className="landing_subtitle">
         <div className="landing_subtitle-text">
-          <Typography variant={"subtitle1"} component={"h2"}>
+          <Typography variant={"subtitle1"} component={"h2"} color={"white"}>
             Craft your own NFT spaceship to participate in the first
           </Typography>
         </div>
@@ -27,6 +29,7 @@ const Landing: React.FunctionComponent = () => {
             variant={"subtitle1"}
             sx={{ ml: "0.75rem" }}
             component={"h2"}
+            color={"white"}
           >
             <span className="secondary-text">blockchain charity raffle </span>
             to save humanity.
