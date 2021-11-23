@@ -3,7 +3,7 @@
     "target": "es2018",
     "module": "commonJS",
     "strict": true,
-    "esModuleInterop": false,
+    "esModuleInterop": true,
     "outDir": "dist",
     "declaration": true,
     "lib": ["dom", "dom.iterable", "esnext"],
