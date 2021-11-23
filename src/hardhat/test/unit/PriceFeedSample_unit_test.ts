@@ -10,7 +10,7 @@ describe('PriceConsumer Unit Tests', async function () {
     let priceFeedSample:PriceFeedSample;
 
     beforeEach(async () => {
-        //await deployments.fixture(['mocks', 'feed'])
+        await deployments.fixture(['mocks', 'feed'])
         const PriceFeedSample = await deployments.get("PriceFeedSample")
         priceFeedSample = await ethers.getContractAt("PriceFeedSample", PriceFeedSample.address)
     })

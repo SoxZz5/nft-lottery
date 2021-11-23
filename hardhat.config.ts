@@ -18,12 +18,24 @@ dotenv.config();
 // Go to https://hardhat.org/config/ to learn more
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.9",
+  solidity: {
+    compilers: [
+      {
+        version: "0.8.9"
+      },
+      {
+        version: "0.6.6"
+      },
+      {
+        version: "0.4.24"
+      }
+    ]
+  },
   networks: {
     kovan: {
       url: process.env.KOVAN_URL || "",
       accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
   },
   gasReporter: {
