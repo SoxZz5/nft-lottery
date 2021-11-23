@@ -19,7 +19,7 @@ const CustomButtonRoot = styled(Button)`
   transition: all 200ms ease;
   cursor: pointer;
   border: none;
-  margin-right: 2rem;
+  margin-right: 4rem;
   border-radius: 5px;
   box-shadow: 0 0 24px 0 #f0f;
   border: solid 1px #f0f;

@@ -55,6 +55,9 @@ const NavBar: React.FunctionComponent = () => {
         >
           Team
         </Link>
+        <Link sx={{ ml: "4rem", cursor: "pointer" }} underline="none">
+          Lite Paper
+        </Link>
       </div>
       <ConnectButton>Connect Wallet</ConnectButton>
     </AppBar>

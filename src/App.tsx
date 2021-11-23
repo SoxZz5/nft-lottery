@@ -4,7 +4,7 @@ import NavBar from "./components/nav/NavBar";
 import routes from "./services/routes";
 import { Provider } from "react-redux";
 import { store, persistor } from "./services/redux/store";
-//import { PersistGate } from "redux-persist/integration/react";
+import PerfectScrollbar from "react-perfect-scrollbar";
 
 const Router: React.FunctionComponent<{}> = () => {
   const mappedRoute = routes.map((route: any) => {
@@ -16,12 +16,16 @@ const Router: React.FunctionComponent<{}> = () => {
 
 const App: React.FunctionComponent<{}> = () => {
   return (
-    <Provider store={store}>
-      <BrowserRouter>
-        <NavBar />
-        <Router />
-      </BrowserRouter>
-    </Provider>
+    <PerfectScrollbar
+      options={{ minScrollbarLength: 80, maxScrollbarLength: 120 }}
+    >
+      <Provider store={store}>
+        <BrowserRouter>
+          <NavBar />
+          <Router />
+        </BrowserRouter>
+      </Provider>
+    </PerfectScrollbar>
   );
 };
 export default App;

@@ -1,6 +1,7 @@
 @import "normalize.css/normalize.css";
 @import url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Orbitron&display=swap");
+@import "react-perfect-scrollbar/dist/css/styles.css";
 @import "./landing";
 @import "./minter";
 @import "./navbar";
@@ -8,6 +9,29 @@
 html {
   font-family: "Orbitron", sans-serif;
   font-family: "Raleway", sans-serif;
+}
+
+html,
+body,
+#root {
+  overflow: hidden;
+}
+
+#root {
+  height: 100vh;
+  width: 100vw;
+}
+
+.scrollbar-container {
+  width: 100%;
+  .ps__rail-y {
+    margin-left: auto;
+    background-color: transparent !important;
+    .ps__thumb-y {
+      background-color: #f0f !important;
+      box-shadow: 0 0 24px 0 #f0f;
+    }
+  }
 }
 
 .full-height {
