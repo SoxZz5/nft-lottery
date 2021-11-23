@@ -1,18 +1,18 @@
 import { Typography } from "@mui/material";
 import * as React from "react";
 
-const Roadmap: React.FunctionComponent = () => {
+const Hangar: React.FunctionComponent = () => {
   return (
-    <div className="full-height" id="roadmap">
+    <div className="full-height" id="hangar">
       <Typography
         variant={"h5"}
         component={"h2"}
         sx={{ ml: "2rem", mt: "5rem" }}
       >
-        ROADMAP EVENTS
+        SPACE HANGAR
       </Typography>
     </div>
   );
 };
 
-export default Roadmap;
+export default Hangar;

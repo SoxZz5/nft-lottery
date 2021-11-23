@@ -1,8 +1,18 @@
 @import "normalize.css/normalize.css";
 @import url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Orbitron&display=swap");
+@import "./landing";
+@import "./minter";
+@import "./navbar";
 
 html {
   font-family: "Orbitron", sans-serif;
   font-family: "Raleway", sans-serif;
+}
+
+.full-height {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }

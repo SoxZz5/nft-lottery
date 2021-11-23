@@ -1,26 +1,63 @@
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
+import Link from "@mui/material/Link";
+import ConnectButton from "./ConnectButton";
+import { useLocation } from "react-router-dom";
 
 const NavBar: React.FunctionComponent = () => {
+  const location = useLocation();
+  const isActive = (menu: string): any => {
+    if (location.hash === menu) {
+      return "active";
+    }
+    return "";
+  };
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" color="transparent">
-        <Toolbar>
-          <Button sx={{ ml: "4rem" }}>LOGO</Button>
-          <Button sx={{ ml: "auto" }}>Roadmap</Button>
-          <Button sx={{ ml: "2rem" }}>Gallery</Button>
-          <Button variant="outlined" sx={{ ml: "2rem", mr: "4rem" }}>
-            Connect Wallet
-          </Button>
-        </Toolbar>
-      </AppBar>
-    </Box>
+    <AppBar className="main-menu" color="transparent">
+      <div className="main-menu_menu">
+        <Link
+          sx={{ ml: "10rem" }}
+          href="#landing"
+          className={`${isActive("#landing")}`}
+          underline="none"
+        >
+          About
+        </Link>
+        <Link
+          sx={{ ml: "4rem" }}
+          href="#minter"
+          className={`${isActive("#minter")}`}
+          underline="none"
+        >
+          Mint
+        </Link>
+        <Link
+          sx={{ ml: "4rem" }}
+          href="#hangar"
+          className={`${isActive("#hangar")}`}
+          underline="none"
+        >
+          Hangar
+        </Link>
+        <Link
+          sx={{ ml: "4rem" }}
+          href="#roadmap"
+          className={`${isActive("#roadmap")}`}
+          underline="none"
+        >
+          Roadmap
+        </Link>
+        <Link
+          sx={{ ml: "4rem" }}
+          href="#team"
+          className={`${isActive("#team")}`}
+          underline="none"
+        >
+          Team
+        </Link>
+      </div>
+      <ConnectButton>Connect Wallet</ConnectButton>
+    </AppBar>
   );
 };
 
