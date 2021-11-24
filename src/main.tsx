@@ -9,7 +9,7 @@ import { ChainId, DAppProvider } from "@usedapp/core";
 const DappConfig = {
   readOnlyChainId: ChainId.Mainnet,
   /*readOnlyUrls: {
-    [ChainId.Mainnet]: `${import.meta.env.VITE_KOVAN_URL}`,
+    [ChainId.Mainnet]: `${import.meta.env.MUMBAI_RPC_URL}`,
   },*/
 };
 

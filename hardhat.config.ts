@@ -33,10 +33,15 @@ const config: HardhatUserConfig = {
   },
   networks: {
     kovan: {
-      url: process.env.VITE_KOVAN_URL || "",
-      accounts:
-      process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      url: process.env.KOVAN_RPC_URL || "",
+      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      saveDeployments: true
     },
+    mumbai: {
+      url: process.env.MUMBAI_RPC_URL || "",
+      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      saveDeployments: true
+    }
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
