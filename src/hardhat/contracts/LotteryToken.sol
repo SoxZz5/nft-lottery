@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "./Lottery.sol";
 
 library SpaceShips {
     struct Ship {
@@ -34,16 +35,18 @@ contract LotteryToken is ERC721Enumerable, Ownable {
     using Strings for uint256;
     string public CID;
     Counters.Counter private _tokenIdsCounter;
-    mapping(uint256 => SpaceShips.Ship) private _allSpaceShips;
+    Lottery private lottery;
 
-    constructor(string memory _name, string memory _symbol, string memory _CID) ERC721(_name, _symbol) {
-        bytes memory tempCID = bytes(_CID);
-        require(tempCID.length > 0, "No CID provided");
+    mapping(uint256 => SpaceShips.Ship) private _lotteryTickets;
+
+    constructor(Lottery _lottery, string memory _name, string memory _symbol, string memory _CID) ERC721(_name, _symbol) {
+        require(bytes(_CID).length > 0, "No CID provided");
         CID = _CID;
+        lottery = _lottery;
     }
 
     function getShip(uint256 tokenId) public view returns (SpaceShips.Ship memory) {
-        return _allSpaceShips[tokenId];
+        return _lotteryTickets[tokenId];
     }
 
     /*
@@ -57,7 +60,7 @@ contract LotteryToken is ERC721Enumerable, Ownable {
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "ERC721URIStorage: URI query for nonexistent token");
 
-        SpaceShips.Ship memory ship = _allSpaceShips[tokenId];
+        SpaceShips.Ship memory ship = _lotteryTickets[tokenId];
         return string(abi.encodePacked("ipfs://", CID, "/", SpaceShips.toString(ship), ".json"));
     }
 
@@ -70,7 +73,7 @@ contract LotteryToken is ERC721Enumerable, Ownable {
         uint256 tokenId = _tokenIdsCounter.current();
         _safeMint(recipient, tokenId);
         
-        _allSpaceShips[tokenId] = spaceShip;
+        _lotteryTickets[tokenId] = spaceShip;
 
         _tokenIdsCounter.increment();
         return tokenId;
