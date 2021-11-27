@@ -1,0 +1,30 @@
+{
+  "body": [
+    "/images/layers/body/body_a.png",
+    "/images/layers/body/body_b.png",
+    "/images/layers/body/body_c.png",
+    "/images/layers/body/body_d.png",
+    "/images/layers/body/body_e.png"
+  ],
+  "booster": [
+    "/images/layers/booster/booster_a.png",
+    "/images/layers/booster/booster_b.png",
+    "/images/layers/booster/booster_c.png",
+    "/images/layers/booster/booster_d.png",
+    "/images/layers/booster/booster_e.png"
+  ],
+  "skin": [
+    "/images/layers/skin/skin_a.png",
+    "/images/layers/skin/skin_b.png",
+    "/images/layers/skin/skin_c.png",
+    "/images/layers/skin/skin_d.png",
+    "/images/layers/skin/skin_e.png"
+  ],
+  "weapon": [
+    "/images/layers/weapon/weapon_a.png",
+    "/images/layers/weapon/weapon_b.png",
+    "/images/layers/weapon/weapon_c.png",
+    "/images/layers/weapon/weapon_d.png",
+    "/images/layers/weapon/weapon_e.png"
+  ]
+}

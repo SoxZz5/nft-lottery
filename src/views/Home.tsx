@@ -10,9 +10,7 @@ const Home: React.FunctionComponent = () => {
     <div>
       <Landing />
       <Minter />
-      <Hangar />
       <Roadmap />
-      <Team />
     </div>
   );
 };

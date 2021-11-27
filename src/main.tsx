@@ -15,6 +15,8 @@ const DappConfig = {
 
 console.log("START APP WITH", DappConfig);
 
+//listReactFiles(__dirname).then((files: any) => console.log(files));
+
 ReactDOM.render(
   <React.StrictMode>
     <DAppProvider config={DappConfig}>

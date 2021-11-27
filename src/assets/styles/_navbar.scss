@@ -1,9 +1,13 @@
+header {
+}
+
 .main-menu {
   display: flex !important;
   flex-direction: row !important;
   justify-content: center !important;
   width: 100% !important;
-  padding: 3rem 2rem 1rem 2rem;
+  padding: 1.5rem 2rem 1rem 2rem;
+  text-shadow: 0 2px 24px #f0f !important;
 
   &_logo {
     padding-left: 1rem;
