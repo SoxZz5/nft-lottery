@@ -3,7 +3,20 @@
   flex-direction: row !important;
   justify-content: center !important;
   width: 100% !important;
-  padding: 1rem 2rem;
+  padding: 3rem 2rem 1rem 2rem;
+
+  &_logo {
+    padding-left: 1rem;
+    box-sizing: border-box;
+    .logo-name {
+      height: 54px;
+    }
+    .logo-ship {
+      position: absolute;
+      height: 125%;
+      transform: translate(5%, -25%);
+    }
+  }
 
   &_menu {
     flex-grow: 1;

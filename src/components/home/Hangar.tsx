@@ -3,11 +3,11 @@ import * as React from "react";
 
 const Hangar: React.FunctionComponent = () => {
   return (
-    <div className="full-height" id="hangar">
+    <div className="full-height hangar" id="hangar">
       <Typography
         variant={"h5"}
         component={"h2"}
-        sx={{ ml: "2rem", mt: "5rem" }}
+        sx={{ ml: "2rem", mt: "10rem" }}
       >
         SPACE HANGAR
       </Typography>

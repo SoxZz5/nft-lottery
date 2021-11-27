@@ -1,0 +1,14 @@
+.roadmap {
+  background: url("images/roadmap-bg.png");
+  background-position-y: 25%;
+  background-position-x: 50%;
+
+  &-overlay {
+    background: url("images/roadmap-overlay.png") center;
+    background-size: cover;
+    z-index: 2;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+  }
+}

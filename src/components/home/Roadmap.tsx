@@ -3,11 +3,12 @@ import * as React from "react";
 
 const Roadmap: React.FunctionComponent = () => {
   return (
-    <div className="full-height" id="roadmap">
+    <div className="full-height roadmap" id="roadmap">
+      <div className="roadmap-overlay" />
       <Typography
         variant={"h5"}
         component={"h2"}
-        sx={{ ml: "2rem", mt: "5rem" }}
+        sx={{ ml: "2rem", mt: "10rem" }}
       >
         ROADMAP EVENTS
       </Typography>

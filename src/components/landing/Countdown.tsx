@@ -46,10 +46,23 @@ const Countdown: React.FunctionComponent = () => {
       </Typography>
     );
   });
-
   return (
     <div className="landing_countdown">
-      {timerComponents.length ? timerComponents : <span>Time's up!</span>}
+      {import.meta.env.VITE_ACTIVE_COUNTDOWN !== "false" ? (
+        <div>
+          {timerComponents.length ? (
+            timerComponents
+          ) : (
+            <Typography variant={"h4"} color={"white"} fontWeight={"bold"}>
+              Time's up!{" "}
+            </Typography>
+          )}
+        </div>
+      ) : (
+        <Typography variant={"h4"} color={"white"} fontWeight={"bold"}>
+          Coming Soon{" "}
+        </Typography>
+      )}
     </div>
   );
 };

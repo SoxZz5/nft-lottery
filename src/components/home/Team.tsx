@@ -7,7 +7,7 @@ const Team: React.FunctionComponent = () => {
       <Typography
         variant={"h5"}
         component={"h2"}
-        sx={{ ml: "2rem", mt: "5rem" }}
+        sx={{ ml: "2rem", mt: "10rem" }}
       >
         PROJECT TEAM
       </Typography>
