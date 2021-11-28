@@ -1,5 +1,6 @@
 export interface MinterState {
   state: number;
+  contract: any;
 }
 
 export enum MinterAction {

@@ -12,7 +12,7 @@ import {
 import LotteryContract from "@/hardhat/artifacts/contracts/Lottery.sol/Lottery.json";
 import { Interface } from "@ethersproject/abi";
 import { useEffect, useState } from "react";
-import { BigNumber, utils } from "ethers";
+import { BigNumber, ethers, utils } from "ethers";
 import maticIcon from "@/assets/images/icons/matic.png";
 import PolygonChainInfo from "@/config/polygonChain.config";
 import { useSelector } from "react-redux";
@@ -21,12 +21,12 @@ export type Ship = {
   body: number;
   skin: number;
   weapon: number;
-  booster?: number;
-  shield?: number;
+  booster: number;
 };
 
 const Minter: React.FunctionComponent = () => {
   const minterStore = useSelector((state: any) => state.minter);
+  const userStore = useSelector((state: any) => state.user);
   const [curShip, setCurShip] = React.useState<Ship>({
     body: 0,
     skin: 0,
@@ -34,19 +34,46 @@ const Minter: React.FunctionComponent = () => {
     booster: 0,
   });
   const [priceDisplay, setPriceDisplay] = React.useState<string>("");
+  const [priceUsdDisplay, setPriceUsdDisplay] = React.useState<string>("");
   const priceFeed: any = useContractCall({
     abi: new Interface(LotteryContract.abi),
     address: PolygonChainInfo.contractAddress,
     method: "getPriceToParticipate",
     args: [],
   });
-  const { account } = useEthers();
+  const pricedUsd: any = useContractCall({
+    abi: new Interface(LotteryContract.abi),
+    address: PolygonChainInfo.contractAddress,
+    method: "entryPriceUsd",
+    args: [],
+  });
+  const { account, activateBrowserWallet } = useEthers();
   const userEtherBalance = useEtherBalance(account);
   const userEtherDisplay = userEtherBalance
     ? utils.formatEther(BigNumber.from(userEtherBalance.toString())).slice(0, 5)
     : "";
   const mintActive = minterStore.state === 2;
-  //console.log(userEtherBalance);
+  const mintFunc = minterStore.contract.participate;
+  const mintSpaceShip = (): void => {
+    if (userStore.connected) {
+      const shipMintable = [
+        [
+          curShip.body.toString(),
+          curShip.skin.toString(),
+          curShip.weapon.toString(),
+          curShip.booster.toString(),
+        ],
+      ];
+      try {
+        console.log(`[[${shipMintable.toString()}]]`);
+        mintFunc(`[${shipMintable.toString()}]`);
+      } catch (error: any) {
+        console.log(error, shipMintable);
+      }
+    } else {
+      activateBrowserWallet();
+    }
+  };
   /*const mintFunc = useContractFunction(
     {
       abi: new Interface(LotteryContract.abi),
@@ -61,6 +88,11 @@ const Minter: React.FunctionComponent = () => {
       );
     }
   }, [priceFeed]);
+  useEffect(() => {
+    if (pricedUsd) {
+      setPriceUsdDisplay(pricedUsd.toString());
+    }
+  }, [pricedUsd]);
 
   return (
     <div
@@ -86,30 +118,33 @@ const Minter: React.FunctionComponent = () => {
         >
           MINT YOUR SPACESHIP
         </Typography>
-        {userEtherDisplay ? (
-          <Typography
-            variant={"subtitle1"}
-            component={"h3"}
-            sx={{
-              ml: "auto",
-              mt: "6.5rem",
-              mr: "2rem",
-              fontSize: "2rem",
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            You have : {userEtherDisplay}{" "}
-            <img
-              className="matic-icon"
-              src={maticIcon}
-              style={{ marginLeft: "0.5rem", marginTop: "0.5rem" }}
-            />
-          </Typography>
-        ) : (
-          ""
-        )}
+        <Typography
+          variant={"subtitle1"}
+          component={"h3"}
+          sx={{
+            ml: "auto",
+            mt: "6.5rem",
+            mr: "2rem",
+            fontSize: "2rem",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          {userEtherDisplay ? (
+            <span>
+              You have : {userEtherDisplay}
+              {""}
+              <img
+                className="matic-icon"
+                src={maticIcon}
+                style={{ marginLeft: "0.5rem", marginTop: "0.5rem" }}
+              />
+            </span>
+          ) : (
+            "Not Connected"
+          )}{" "}
+        </Typography>
         <Typography
           variant={"subtitle1"}
           component={"h3"}
@@ -139,7 +174,7 @@ const Minter: React.FunctionComponent = () => {
         <div className="minter_validator-left" />
         <div className="minter_validator-right">
           {mintActive ? (
-            <CustomButton>Mint</CustomButton>
+            <CustomButton onClick={mintSpaceShip}>Mint</CustomButton>
           ) : (
             <CustomButton>Coming Soon</CustomButton>
           )}
@@ -166,7 +201,7 @@ const Minter: React.FunctionComponent = () => {
             sx={{ fontWeight: "500", fontSize: "2rem", ml: "2rem" }}
             component={"span"}
           >
-            19 $
+            {priceUsdDisplay} $
           </Typography>
         </div>
       </div>
