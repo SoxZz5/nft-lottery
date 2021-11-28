@@ -8,4 +8,5 @@ export enum UserAction {
   CONNECT = "CONNECT",
   DISCONNECT = "DISCONNECT",
   SET_ACCOUNT = "SET_ACCOUNT",
+  SET_CHAIN = "SET_CHAIN",
 }

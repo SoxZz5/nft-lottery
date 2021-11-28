@@ -5,12 +5,13 @@ import "@/assets/styles/global.scss";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "@/services/mui/createTheme";
 import { ChainId, DAppProvider } from "@usedapp/core";
+import PolygonChainInfo from "@/config/polygonChain.config";
 
 const DappConfig = {
-  readOnlyChainId: ChainId.Mainnet,
-  /*readOnlyUrls: {
-    [ChainId.Mainnet]: `${import.meta.env.MUMBAI_RPC_URL}`,
-  },*/
+  readOnlyChainId: PolygonChainInfo.chainId,
+  readOnlyUrls: {
+    [PolygonChainInfo.chainId]: PolygonChainInfo.rpcUrl,
+  },
 };
 
 ReactDOM.render(

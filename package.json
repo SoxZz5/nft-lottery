@@ -14,6 +14,7 @@
     "postinstall": "npx --no-install rimraf .husky && npx husky install && npm run hook:install",
     "hook:install": "npx --no-install husky add .husky/commit-msg \"npx --no-install commitlint --edit $1\"",
     "start:node": "npx hardhat node",
+    "build:node": "yarn hardhat compile",
     "prepare": "husky install",
     "dev": "vite",
     "build": "vite build",

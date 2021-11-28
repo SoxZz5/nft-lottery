@@ -3,6 +3,12 @@ import { Typography } from "@mui/material";
 import * as React from "react";
 import MinterCreator from "@/components/minter/MinterCreator";
 import MinterDisplay from "@/components/minter/MinterDisplay";
+import { useContractCall, useEthers } from "@usedapp/core";
+import LotteryContract from "@/hardhat/artifacts/contracts/Lottery.sol/Lottery.json";
+import { Interface } from "@ethersproject/abi";
+import { useEffect, useState } from "react";
+import { BigNumber, utils } from "ethers";
+import maticIcon from "@/assets/images/icons/matic.png";
 
 export type Ship = {
   body: number;
@@ -19,6 +25,21 @@ const Minter: React.FunctionComponent = () => {
     weapon: 0,
     booster: 0,
   });
+  const [priceDisplay, setPriceDisplay] = React.useState<string>("");
+  const priceFeed: any = useContractCall({
+    abi: new Interface(LotteryContract.abi),
+    address: "0x8b17cfc20c6abef886e5d93a70b17d2f3bb28615",
+    method: "getPriceToParticipate",
+    args: [],
+  });
+  useEffect(() => {
+    if (priceFeed) {
+      setPriceDisplay(
+        utils.formatEther(BigNumber.from(priceFeed.toString())).slice(0, 5)
+      );
+    }
+  }, [priceFeed]);
+
   return (
     <div
       className="minter full-height"
@@ -33,16 +54,35 @@ const Minter: React.FunctionComponent = () => {
         <Typography
           variant={"h4"}
           component={"h2"}
-          sx={{ ml: "2rem", mt: "6.5rem" }}
+          sx={{
+            ml: "2rem",
+            mt: "6.5rem",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
         >
           MINT YOUR SPACESHIP
         </Typography>
         <Typography
           variant={"subtitle1"}
           component={"h3"}
-          sx={{ ml: "auto", mt: "6.5rem", mr: "2rem" }}
+          sx={{
+            ml: "auto",
+            mt: "6.5rem",
+            mr: "2rem",
+            fontSize: "2rem",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
         >
-          Unit Price : x $
+          Unit Price : {priceDisplay}{" "}
+          <img
+            className="matic-icon"
+            src={maticIcon}
+            style={{ marginLeft: "0.5rem", marginTop: "0.5rem" }}
+          />
         </Typography>
       </div>
       <div className="minter_calculator">
@@ -54,17 +94,28 @@ const Minter: React.FunctionComponent = () => {
           <CustomButton>Coming Soon</CustomButton>
           <Typography
             variant={"h4"}
-            sx={{ fontWeight: "500" }}
+            sx={{
+              fontWeight: "500",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
             component={"span"}
           >
-            0.034 BNB |
+            {priceDisplay}{" "}
+            <img
+              className="matic-icon"
+              src={maticIcon}
+              style={{ marginLeft: "1rem", marginRight: "2rem" }}
+            />{" "}
+            |
           </Typography>
           <Typography
-            variant={"subtitle1"}
+            variant={"h4"}
             sx={{ fontWeight: "500", fontSize: "2rem", ml: "2rem" }}
             component={"span"}
           >
-            25$
+            19 $cam Coin
           </Typography>
         </div>
       </div>
