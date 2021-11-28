@@ -31,6 +31,11 @@
     align-items: center;
     margin-top: -4rem;
     position: relative;
+    padding: 2rem;
+    max-width: 550px;
+    width: 550px;
+    height: 550px;
+    max-height: 550px;
 
     &::before {
       content: "";
@@ -87,7 +92,8 @@
   &_countdown {
     text-transform: uppercase;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    align-items: center;
     font-weight: bold;
 
     &.notActive {
@@ -108,9 +114,9 @@
       display: flex;
       flex-direction: row;
       & > * {
-        font-size: 3rem;
-        text-shadow: 0 1px 6px rgba(white, 0.25);
+        font-size: 2.5rem;
         margin-left: 1rem !important;
+        text-shadow: 0 0 24px rgba(#ff00ff, 1);
       }
     }
   }
