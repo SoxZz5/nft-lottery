@@ -6,7 +6,6 @@ typechain
 
 #Hardhat files
 cache
-artifacts
 src/hardhat/deployments
 
 #Husky hooks
