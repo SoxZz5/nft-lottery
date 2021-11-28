@@ -4,7 +4,7 @@ import Link from "@mui/material/Link";
 import ConnectButton from "@/components/nav/ConnectButton";
 import logoName from "@/assets/images/logo-name.png";
 import logoShip from "@/assets/images/logo-ship.png";
-
+import whitePaper from "@/assets/whitepaper.pdf";
 type Menu = {
   label: string;
   id: string;
@@ -64,7 +64,8 @@ const NavBar: React.FunctionComponent = () => {
               sx={{ ml: marginLeft, cursor: "pointer" }}
               className={`${isActive(menu.id)}`}
               underline="none"
-              onClick={downloadLitePaper}
+              href={whitePaper}
+              target="_blank"
             >
               {menu.label}
             </Link>
