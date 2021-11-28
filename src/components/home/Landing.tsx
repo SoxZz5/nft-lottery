@@ -6,17 +6,19 @@ const Landing: React.FunctionComponent = () => {
   return (
     <div className="landing full-height" id="landing">
       <div className="landing_solar">
-        <Typography
-          variant={"h4"}
-          sx={{ mb: "1rem" }}
-          component={"h1"}
-          color={"white"}
-          fontWeight={"bold"}
-        >
-          Take part of the only one
-          <br /> space caritative mission
-        </Typography>
-        <Countdown />
+        <div className="landing_solar-content">
+          <Typography
+            variant={"h4"}
+            sx={{ mb: "1rem" }}
+            component={"h1"}
+            color={"white"}
+            fontWeight={"bold"}
+          >
+            Take part of the only one
+            <br /> space caritative mission
+          </Typography>
+          <Countdown />
+        </div>
       </div>
       <div className="landing_info">
         <Typography

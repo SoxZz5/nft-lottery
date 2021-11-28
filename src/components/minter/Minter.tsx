@@ -20,7 +20,15 @@ const Minter: React.FunctionComponent = () => {
     booster: 0,
   });
   return (
-    <div className="minter full-height" id="minter">
+    <div
+      className="minter full-height"
+      id="minter"
+      style={{
+        background: `url("/images/mint-launching.png")`,
+        backgroundSize: "cover",
+        backgroundPositionY: "100%",
+      }}
+    >
       <div className="minter_header">
         <Typography
           variant={"h4"}

@@ -3,7 +3,11 @@ import * as React from "react";
 
 const Hangar: React.FunctionComponent = () => {
   return (
-    <div className="full-height hangar" id="hangar">
+    <div
+      className="full-height hangar"
+      id="hangar"
+      style={{ background: `url("/images/hangar.png")` }}
+    >
       <Typography
         variant={"h4"}
         component={"h2"}
