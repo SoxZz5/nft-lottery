@@ -1,0 +1,26 @@
+.footer {
+  width: 100%;
+  height: 64px;
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  align-items: center;
+  padding: 0.5rem 6rem 0.5rem 6rem;
+  box-sizing: border-box;
+
+  &-icon {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    & > svg {
+      height: 90%;
+      width: 90%;
+
+      &:hover {
+        color: rgba(white, 0.75);
+      }
+    }
+  }
+}

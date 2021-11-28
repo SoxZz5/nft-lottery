@@ -5,6 +5,7 @@ import routes from "@/services/routes";
 import { Provider } from "react-redux";
 import { store } from "@/services/redux/store";
 import PerfectScrollbar from "react-perfect-scrollbar";
+import Footer from "@/components/footer/Footer";
 
 const Router: React.FunctionComponent<{}> = () => {
   const mappedRoute = routes.map((route: any) => {
@@ -23,6 +24,7 @@ const App: React.FunctionComponent<{}> = () => {
         <BrowserRouter>
           <NavBar />
           <Router />
+          <Footer />
         </BrowserRouter>
       </Provider>
     </PerfectScrollbar>
