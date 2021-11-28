@@ -16,7 +16,7 @@
     "start:node": "npx hardhat node",
     "prepare": "husky install",
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "serve": "vite preview"
   },
   "dependencies": {
