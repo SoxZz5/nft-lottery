@@ -13,18 +13,22 @@ import * as MinterService from "@/services/redux/minter/minter.action";
 
 const Countdown: React.FunctionComponent = () => {
   const dispatch = useDispatch();
-  const stateFeed: any = useContractCall({
-    abi: new Interface(LotteryContract.abi),
-    address: PolygonChainInfo.contractAddress,
-    method: "getState",
-    args: [],
-  });
-  const participationDate: any = useContractCall({
-    abi: new Interface(LotteryContract.abi),
-    address: PolygonChainInfo.contractAddress,
-    method: "endOfParticipationPeriod",
-    args: [],
-  });
+  let stateFeed: any = undefined;
+  let participationDate: any = undefined;
+  if (PolygonChainInfo.contractAddress !== "") {
+    stateFeed = useContractCall({
+      abi: new Interface(LotteryContract.abi),
+      address: PolygonChainInfo.contractAddress,
+      method: "getState",
+      args: [],
+    });
+    participationDate = useContractCall({
+      abi: new Interface(LotteryContract.abi),
+      address: PolygonChainInfo.contractAddress,
+      method: "endOfParticipationPeriod",
+      args: [],
+    });
+  }
   const [curState, setCurState] = useState("Coming soon");
   const [curEnd, setCurEnd] = useState(moment().valueOf());
   const [countdownActive, setCountdownActive] = useState(false);

@@ -1,6 +1,7 @@
 import Countdown from "@/components/landing/Countdown";
 import * as React from "react";
 import { Typography } from "@mui/material";
+import PolygonChainInfo from "@/config/polygonChain.config";
 
 const Landing: React.FunctionComponent = () => {
   return (
@@ -30,7 +31,9 @@ const Landing: React.FunctionComponent = () => {
           NFT contract :
         </Typography>
         <Typography variant={"subtitle1"} color={"white"}>
-          Coming Soon
+          {PolygonChainInfo.contractAddress !== ""
+            ? PolygonChainInfo.contractAddress
+            : "Coming Soon"}
         </Typography>
         <Typography
           variant={"h5"}
