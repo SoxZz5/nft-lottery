@@ -1,6 +1,7 @@
 export interface UserState {
   connected: boolean;
   account: string;
+  chain: string;
 }
 
 export enum UserAction {

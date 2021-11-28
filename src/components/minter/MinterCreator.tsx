@@ -1,14 +1,12 @@
 import { Typography } from "@mui/material";
 import * as React from "react";
-import { Ship } from "./Minter";
-import minterOptions from "./minterOptions.json";
+import { Ship } from "@/components/minter/Minter";
+import minterOptions from "@/components/minter/minterOptions.json";
 
 const MinterCreator: React.FunctionComponent<{ ship: Ship; setShip: any }> = ({
   ship,
   setShip,
 }) => {
-  console.log(ship);
-  console.log(minterOptions);
   return (
     <div className="minter-creator">
       <div className="minter-creator_column">

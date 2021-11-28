@@ -1,8 +1,8 @@
 import CustomButton from "../utils/CustomButton";
 import { Typography } from "@mui/material";
 import * as React from "react";
-import MinterCreator from "./MinterCreator";
-import MinterDisplay from "./MinterDisplay";
+import MinterCreator from "@/components/minter/MinterCreator";
+import MinterDisplay from "@/components/minter/MinterDisplay";
 
 export type Ship = {
   body: number;

@@ -7,6 +7,7 @@
     "outDir": "dist",
     "declaration": true,
     "lib": ["dom", "dom.iterable", "esnext"],
+    "types": ["vite/client", "node", "jest"],
     "allowJs": false,
     "skipLibCheck": false,
     "allowSyntheticDefaultImports": true,
@@ -16,12 +17,13 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
-    "baseUrl": ".",
+    "jsx": "react",
+    "baseUrl": "./",
     "paths": {
-      "@/": ["src/*"]
+      "@/*": ["./src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["./src"],
+  "exclude": ["node_modules"],
   "files": ["./hardhat.config.ts"]
 }

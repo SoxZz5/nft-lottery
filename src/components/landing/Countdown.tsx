@@ -1,10 +1,13 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
-import * as moment from "moment";
+import _moment from "moment";
 import { Typography } from "@mui/material";
+
+const moment = _moment;
 
 const Countdown: React.FunctionComponent = () => {
   const raffleDate = moment("01/06/2022", "dd/mm/yyyy");
+  const coutdownActive = false;
   const calculateTimeLeft = () => {
     let now = moment();
     let difference = raffleDate.diff(now);
@@ -48,7 +51,7 @@ const Countdown: React.FunctionComponent = () => {
   });
   return (
     <div className="landing_countdown">
-      {import.meta.env.VITE_ACTIVE_COUNTDOWN !== "false" ? (
+      {coutdownActive ? (
         <div>
           {timerComponents.length ? (
             timerComponents

@@ -39,6 +39,7 @@ const Roadmap: React.FunctionComponent = () => {
           return (
             <div
               className="roadmap-content_element"
+              key={index}
               style={{ marginLeft: index % 2 ? "33%" : "0" }}
             >
               <Typography

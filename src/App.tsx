@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter, useRoutes } from "react-router-dom";
-import NavBar from "./components/nav/NavBar";
-import routes from "./services/routes";
+import NavBar from "@/components/nav/NavBar";
+import routes from "@/services/routes";
 import { Provider } from "react-redux";
-import { store, persistor } from "./services/redux/store";
+import { store } from "@/services/redux/store";
 import PerfectScrollbar from "react-perfect-scrollbar";
 
 const Router: React.FunctionComponent<{}> = () => {

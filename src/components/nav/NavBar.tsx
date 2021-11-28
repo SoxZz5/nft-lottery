@@ -1,9 +1,9 @@
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Link from "@mui/material/Link";
-import ConnectButton from "./ConnectButton";
-import logoName from "../../assets/images/logo-name.png";
-import logoShip from "../../assets/images/logo-ship.png";
+import ConnectButton from "@/components/nav/ConnectButton";
+import logoName from "@/assets/images/logo-name.png";
+import logoShip from "@/assets/images/logo-ship.png";
 
 type Menu = {
   label: string;
