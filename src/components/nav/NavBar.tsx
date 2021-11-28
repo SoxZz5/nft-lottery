@@ -1,9 +1,9 @@
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Link from "@mui/material/Link";
-import ConnectButton from "./ConnectButton";
-import logoName from "../../assets/images/logo-name.png";
-import logoShip from "../../assets/images/logo-ship.png";
+import ConnectButton from "@/components/nav/ConnectButton";
+import logoName from "@/assets/images/logo-name.png";
+import logoShip from "@/assets/images/logo-ship.png";
 
 type Menu = {
   label: string;
@@ -15,9 +15,9 @@ const NavBar: React.FunctionComponent = () => {
   const menus: Menu[] = [
     { label: "About", id: "#landing" },
     { label: "Mint", id: "#minter" },
-    { label: "Hangar", id: "#hangar" },
+    //{ label: "Hangar", id: "#hangar" },
     { label: "Roadmap", id: "#roadmap" },
-    { label: "Team", id: "#team" },
+    //{ label: "Team", id: "#team" },
     { label: "Lite Paper", id: "" },
   ];
   const isActive = (menu: string): any => {
@@ -42,7 +42,7 @@ const NavBar: React.FunctionComponent = () => {
       </div>
       <div className="main-menu_menu">
         {menus.map((menu: Menu, index: number) => {
-          const marginLeft = index === 0 ? "10rem" : "4rem";
+          const marginLeft = index === 0 ? "6rem" : "4rem";
           const href = menu.id;
           if (menu.label !== "Lite Paper") {
             return (

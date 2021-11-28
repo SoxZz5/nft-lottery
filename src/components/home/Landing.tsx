@@ -1,11 +1,10 @@
-import Countdown from "../landing/Countdown";
+import Countdown from "@/components/landing/Countdown";
 import * as React from "react";
 import { Typography } from "@mui/material";
 
 const Landing: React.FunctionComponent = () => {
-  const sectionRef = React.useRef();
   return (
-    <div className="landing full-height" id="landing" ref={sectionRef}>
+    <div className="landing full-height" id="landing">
       <div className="landing_solar">
         <Typography
           variant={"h4"}

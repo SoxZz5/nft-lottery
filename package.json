@@ -16,7 +16,7 @@
     "start:node": "npx hardhat node",
     "prepare": "husky install",
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "serve": "vite preview"
   },
   "dependencies": {
@@ -39,8 +39,7 @@
     "react-router-dom": "^6.0.2",
     "react-scripts": "4.0.3",
     "redux-persist": "^6.0.0",
-    "redux-thunk": "^2.4.0",
-    "web-vitals": "^1.0.1"
+    "redux-thunk": "^2.4.0"
   },
   "devDependencies": {
     "@chainlink/contracts": "^0.2.2",

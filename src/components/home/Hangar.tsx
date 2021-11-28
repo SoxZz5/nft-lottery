@@ -5,9 +5,9 @@ const Hangar: React.FunctionComponent = () => {
   return (
     <div className="full-height hangar" id="hangar">
       <Typography
-        variant={"h5"}
+        variant={"h4"}
         component={"h2"}
-        sx={{ ml: "2rem", mt: "10rem" }}
+        sx={{ ml: "4rem", mt: "6.5rem" }}
       >
         SPACE HANGAR
       </Typography>

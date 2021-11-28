@@ -4,6 +4,7 @@ import { UserAction, UserState } from "./user.interface";
 const initialState: UserState = {
   connected: false,
   account: "",
+  chain: "",
 };
 
 const userReducer = (
@@ -16,7 +17,6 @@ const userReducer = (
     case UserAction.DISCONNECT:
       return { ...state, connected: false };
     case UserAction.SET_ACCOUNT:
-      console.log({ ...state, account: action.payload });
       return { ...state, account: action.payload };
     default:
       return state;
