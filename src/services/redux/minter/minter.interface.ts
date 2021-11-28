@@ -5,4 +5,5 @@ export interface MinterState {
 
 export enum MinterAction {
   SET_STATE = "SET_STATE",
+  SET_CONTRACT = "SET_CONTRACT",
 }

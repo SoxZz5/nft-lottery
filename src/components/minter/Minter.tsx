@@ -47,28 +47,23 @@ const Minter: React.FunctionComponent = () => {
     method: "entryPriceUsd",
     args: [],
   });
-  const { account, activateBrowserWallet } = useEthers();
+  const { account, activateBrowserWallet, library } = useEthers();
   const userEtherBalance = useEtherBalance(account);
   const userEtherDisplay = userEtherBalance
     ? utils.formatEther(BigNumber.from(userEtherBalance.toString())).slice(0, 5)
     : "";
   const mintActive = minterStore.state === 2;
-  const mintFunc = minterStore.contract.participate;
-  const mintSpaceShip = (): void => {
+  const { send, state } = useContractFunction(library, "participate");
+  const mintSpaceShip = async (): Promise<void> => {
     if (userStore.connected) {
-      const shipMintable = [
-        [
-          curShip.body.toString(),
-          curShip.skin.toString(),
-          curShip.weapon.toString(),
-          curShip.booster.toString(),
-        ],
-      ];
       try {
-        console.log(`[[${shipMintable.toString()}]]`);
-        mintFunc(`[${shipMintable.toString()}]`);
+        const shipParams = `[["${curShip.body.toString()}", "${curShip.skin.toString()}", "${curShip.weapon.toString()}", "${curShip.booster.toString()}"]]`;
+        console.log(shipParams);
+        console.log(typeof shipParams);
+        await send({ msg: { value: shipParams } });
+        console.log(state);
       } catch (error: any) {
-        console.log(error, shipMintable);
+        console.log(error);
       }
     } else {
       activateBrowserWallet();
