@@ -57,9 +57,9 @@ const Minter: React.FunctionComponent = () => {
     if (userStore.connected) {
       try {
         const shipParams = `[["${curShip.body.toString()}", "${curShip.skin.toString()}", "${curShip.weapon.toString()}", "${curShip.booster.toString()}"]]`;
-        console.log(minterStore.contract.testFunc(0));
+        //console.log(minterStore.contract.testFunc(0));
         //console.log(await minterStore.contract);
-        //minterStore.contract.callStatic.participate(shipParams);
+        minterStore.contract.callStatic.participate(shipParams);
       } catch (error: any) {
         console.log(error);
       }
