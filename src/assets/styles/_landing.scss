@@ -1,3 +1,23 @@
+@keyframes glowing {
+  from {
+    box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #f0f, 0 0 50px #0ff,
+      0 0 60px #e60073, 0 0 70px #e60073, 0 0 80px #ff00ff;
+  }
+  to {
+    box-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 50px #ff4da6,
+      0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6, 0 0 100px #ff00ff;
+  }
+}
+
+@keyframes textglowing {
+  from {
+    text-shadow: 0 1px 6px rgba(white, 0.25);
+  }
+  to {
+    text-shadow: 0 2px 12px rgba(#ff00ff, 1);
+  }
+}
+
 .landing {
   justify-content: center;
   align-items: center;
@@ -9,11 +29,31 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: #030407;
-    padding: 12rem 2rem;
-    box-shadow: 0 0 50px 30px #c1cdd4;
-    border-radius: 50%;
     margin-top: -4rem;
+    position: relative;
+
+    &::before {
+      content: "";
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      border-radius: 50%;
+      z-index: 1;
+      background: transparent;
+      -webkit-animation: glowing 2s ease-in-out infinite alternate;
+      -moz-animation: glowing 2s ease-in-out infinite alternate;
+      animation: glowing 2s ease-in-out infinite alternate;
+    }
+
+    &-content {
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #030407;
+      padding: 12rem 2rem;
+      border-radius: 50%;
+    }
   }
   &_subtitle {
     position: absolute;
@@ -50,12 +90,26 @@
     flex-direction: row;
     font-weight: bold;
 
+    &.notActive {
+      & > * {
+        position: relative;
+        /*-webkit-animation: textglowing 1s ease-in-out infinite alternate;
+        -moz-animation: textglowing 1s ease-in-out infinite alternate;
+        animation: textglowing 1s ease-in-out infinite alternate;*/
+        /*-webkit-animation: glowing 2s ease-in-out infinite alternate;
+        -moz-animation: glowing 2s ease-in-out infinite alternate;
+        animation: glowing 2s ease-in-out infinite alternate;*/
+        //text-shadow: 0 0px 6px rgba(white, 1);
+        text-shadow: 0 0 24px rgba(#ff00ff, 1);
+      }
+    }
+
     & > div {
       display: flex;
       flex-direction: row;
       & > * {
         font-size: 3rem;
-        text-shadow: 0 1px 6px rgba(white, 0.25) !important;
+        text-shadow: 0 1px 6px rgba(white, 0.25);
         margin-left: 1rem !important;
       }
     }

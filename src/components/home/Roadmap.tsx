@@ -24,8 +24,24 @@ const Roadmap: React.FunctionComponent = () => {
     { title: "Release of fund to associations", desc: "" },
   ];
   return (
-    <div className="full-height roadmap" id="roadmap">
-      <div className="roadmap-overlay" />
+    <div
+      className="full-height roadmap"
+      id="roadmap"
+      style={{
+        background: `url("/images/roadmap-bg.png")`,
+        backgroundSize: "cover",
+        backgroundPositionY: "25%",
+        backgroundPositionX: "50%",
+      }}
+    >
+      <div
+        className="roadmap-overlay"
+        style={{
+          background: `url("/images/roadmap-overlay.png")`,
+          backgroundSize: "cover",
+          backgroundPositionY: "-75%",
+        }}
+      />
       <img src={shipImg} className="roadmap-ship" />
       <Typography
         variant={"h4"}

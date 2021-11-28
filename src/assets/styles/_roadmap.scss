@@ -1,20 +1,13 @@
 .roadmap {
-  background: url("images/roadmap-bg.png");
-  background-position-y: 25%;
-  background-position-x: 50%;
   position: relative;
-  background-size: cover;
   overflow-y: hidden;
 
   &-overlay {
-    background: url("images/roadmap-overlay.png") center;
-    background-size: cover;
     z-index: 2;
     position: absolute;
     height: 100%;
     width: 100%;
     left: -9.5%;
-    background-position-y: 12.5%;
   }
 
   &-ship {

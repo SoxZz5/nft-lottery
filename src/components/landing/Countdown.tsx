@@ -48,7 +48,7 @@ const Countdown: React.FunctionComponent = () => {
     );
   });
   return (
-    <div className="landing_countdown">
+    <div className={`landing_countdown ${coutdownActive ? "" : "notActive"}`}>
       {coutdownActive ? (
         <div>
           {timerComponents.length ? (
