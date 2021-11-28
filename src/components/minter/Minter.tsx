@@ -33,21 +33,25 @@ const Minter: React.FunctionComponent = () => {
     weapon: 0,
     booster: 0,
   });
-  const [priceDisplay, setPriceDisplay] = React.useState<string>("");
-  const [priceUsdDisplay, setPriceUsdDisplay] = React.useState<string>("");
-  const priceFeed: any = useContractCall({
-    abi: new Interface(LotteryContract.abi),
-    address: PolygonChainInfo.contractAddress,
-    method: "getPriceToParticipate",
-    args: [],
-  });
-  const pricedUsd: any = useContractCall({
-    abi: new Interface(LotteryContract.abi),
-    address: PolygonChainInfo.contractAddress,
-    method: "entryPriceUsd",
-    args: [],
-  });
-  const { account, activateBrowserWallet, library } = useEthers();
+  const [priceDisplay, setPriceDisplay] = React.useState<string>("X");
+  const [priceUsdDisplay, setPriceUsdDisplay] = React.useState<string>("X");
+  let priceFeed: any = undefined;
+  let pricedUsd: any = undefined;
+  if (PolygonChainInfo.contractAddress !== "") {
+    priceFeed = useContractCall({
+      abi: new Interface(LotteryContract.abi),
+      address: PolygonChainInfo.contractAddress,
+      method: "getPriceToParticipate",
+      args: [],
+    });
+    pricedUsd = useContractCall({
+      abi: new Interface(LotteryContract.abi),
+      address: PolygonChainInfo.contractAddress,
+      method: "entryPriceUsd",
+      args: [],
+    });
+  }
+  const { account, activateBrowserWallet } = useEthers();
   const userEtherBalance = useEtherBalance(account);
   const userEtherDisplay = userEtherBalance
     ? utils.formatEther(BigNumber.from(userEtherBalance.toString())).slice(0, 5)
@@ -56,10 +60,13 @@ const Minter: React.FunctionComponent = () => {
   const mintSpaceShip = async (): Promise<void> => {
     if (userStore.connected) {
       try {
-        const shipParams = `[["${curShip.body.toString()}", "${curShip.skin.toString()}", "${curShip.weapon.toString()}", "${curShip.booster.toString()}"]]`;
-        //console.log(minterStore.contract.testFunc(0));
-        //console.log(await minterStore.contract);
-        minterStore.contract.callStatic.participate(shipParams);
+        const shipParamsArray = [
+          [curShip.body, curShip.skin, curShip.weapon, curShip.booster],
+        ];
+        await minterStore.contract.participate(shipParamsArray, {
+          from: account,
+          value: BigNumber.from(priceFeed.toString()),
+        });
       } catch (error: any) {
         console.log(error);
       }
@@ -67,13 +74,6 @@ const Minter: React.FunctionComponent = () => {
       activateBrowserWallet();
     }
   };
-  /*const mintFunc = useContractFunction(
-    {
-      abi: new Interface(LotteryContract.abi),
-      address: PolygonChainInfo.contractAddress,
-    },
-    "participate"
-  );*/
   useEffect(() => {
     if (priceFeed) {
       setPriceDisplay(
