@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 import "./LotteryToken.sol";
 import "./PriceConsumers.sol";
@@ -23,7 +22,7 @@ struct Range {
 
 struct ChainlinkVRFData {
     address coordinator;
-    ERC20 link;
+    address link;
     bytes32 keyHash;
     uint fee;
 }
@@ -31,6 +30,7 @@ struct ChainlinkVRFData {
 contract Lottery is VRFConsumerBase {
     enum State 
     { 
+        WaitingForLINK,
         WaitingForParticipationPeriod, 
         OngoingParticipationPeriod, 
         OngoingPreparationPeriod,
@@ -83,7 +83,7 @@ contract Lottery is VRFConsumerBase {
                 ChainlinkVRFData memory _vrfData/*,
                 LotteryEvent[] memory _events*/) 
         VRFConsumerBase(_vrfData.coordinator, 
-                        address(_vrfData.link))
+                        _vrfData.link)
         {
         // ####### Testing: FOR TESTING PURPOSES ONLY
         _beginningOfParticipationPeriod = block.timestamp;
@@ -114,14 +114,6 @@ contract Lottery is VRFConsumerBase {
                 require(_events[i].timestamp > _events[i-1].timestamp, "Events timestamps not in ascending order");
             }
         }
-
-        // Validate LINK allowance for VRF computation
-        uint amountToDeposit = _vrfData.fee * _events.length;
-        uint256 allowance = _vrfData.link.allowance(msg.sender, address(this));
-        require(allowance >= amountToDeposit, "Insufficient LINK allowance");
-
-        // Transfer LINK
-        _vrfData.link.transferFrom(msg.sender, address(this), amountToDeposit);
 
         // Since the following feature is not yet supported, manually copy the array to storage.
         // UnimplementedFeatureError: Copying of type struct LotteryEvent memory[] memory to storage not yet supported.
@@ -311,6 +303,10 @@ contract Lottery is VRFConsumerBase {
         * Returns the current lottery state
     */
     function getState() public view returns(State) {
+        if(getLINKAmountRequired() > 0) {
+            return State.WaitingForLINK;
+        }
+
         if(block.timestamp < beginningOfParticipationPeriod) {
             return State.WaitingForParticipationPeriod;
         }
@@ -332,6 +328,20 @@ contract Lottery is VRFConsumerBase {
         }
 
         return State.Complete;
+    }
+
+    /*
+        * Returns the amount of LINK required to fund the contract 
+        * LINK is used for per-event VRF computation
+    */
+    function getLINKAmountRequired() public view returns(uint) {
+        uint amountRequired = vrfFee * remainingEventsCount;
+        uint currentBalance = LINK.balanceOf(address(this));
+
+        if(currentBalance < amountRequired) {
+            return amountRequired - currentBalance;
+        }
+        return 0;
     }
 
     /*
@@ -375,21 +385,35 @@ contract Lottery is VRFConsumerBase {
     }
 }
 
-//contract LotteryTest is Lottery(18, 19, "bafybeifvom64za2hjknz22q5bg472b2o4xcatmxdkgq76jfcrszjqy46nm", new PriceConsumerMaticUSD()) {
+/**
+     * Network: Polygon
+     -----------------
+     * VRF Coordinator (mainnet): 0x3d2341ADb2D31f1c5530cDC622016af293177AE0
+     * LINK (mainnet): 0xb0897686c545045aFc77CF20eC7A532E3120E0F1
+     * Key Hash (mainnet): 0xf86195cf7690c55907b2b611ebb7343a6f649bff128701cc542f0569e2c549da
+     * Fee: 0.0001 LINK
+     -----------------
+     * VRF Coordinator (testnet): 0x8C7382F9D8f56b33781fE506E897a4F1e2d17255
+     * LINK (testnet): 0x326C977E6efc84E512bB9C30f76E30c160eD06FB
+     * Key Hash (mainnet): 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4
+     * Fee: 0.0001 LINK
+     -----------------
+     * From: https://docs.chain.link/docs/vrf-contracts/
+*/
 contract LotteryTest is Lottery {
-    constructor() Lottery(18,
-                          0, // TESTING. Should be 19
-                          "Test5424243243",
-                          "SS1",
-                          "bafybeidinazu3rqvapnd2qy55kpa5kj2t32xb5dq3bysrb76ccczv7rdse", 
-                          payable(0xf585378ff2A1DeCb335b4899250b83F46DC5c019),
-                          1637784300,
-                          1637787900,
-                          1637791500,
-                          new PriceConsumerMaticUSD(),
-                          ChainlinkVRFData({
+    constructor() Lottery(18,                                                            // Current chain token decimals. MATIC/ETH = 18
+                          0,                                                             // Entry price. TESTING. Should be 19
+                        "Test5424243243",                                                // Token name
+                        "SS1",                                                           // Token symbol
+                          "bafybeidinazu3rqvapnd2qy55kpa5kj2t32xb5dq3bysrb76ccczv7rdse", // CID
+                          payable(0xf585378ff2A1DeCb335b4899250b83F46DC5c019), // Charity address
+                          block.timestamp + 60 * 5,  // Participation period starts 5 minutes later
+                          block.timestamp + 60 * 10, // Preparation period starts 10 minutes later
+                          block.timestamp + 60 * 15, // Preparation period ends 15 minutes later
+                          new PriceConsumerMaticUSD(), // Chainlink Price Feed
+                          ChainlinkVRFData({           // Chainlink VRF
                             coordinator: 0x8C7382F9D8f56b33781fE506E897a4F1e2d17255,
-                            link: ERC20(0x326C977E6efc84E512bB9C30f76E30c160eD06FB),
+                            link: 0x326C977E6efc84E512bB9C30f76E30c160eD06FB,
                             keyHash: 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4,
                             fee: 0.0001 * 10 ** 18
                           })) { }
