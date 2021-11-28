@@ -3,7 +3,7 @@ import { createSvgIcon, SvgIcon } from "@mui/material";
 
 type FooterLink = {
   link: string;
-  icon: string;
+  icon: any;
 };
 
 const GithubIcon = createSvgIcon(
