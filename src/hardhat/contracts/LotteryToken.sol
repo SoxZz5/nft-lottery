@@ -34,9 +34,8 @@ contract LotteryToken is ERC721Enumerable, Ownable {
     using Counters for Counters.Counter;
     using Strings for uint256;
     string public CID;
+    Lottery public lottery;
     Counters.Counter private _tokenIdsCounter;
-    Lottery private lottery;
-
     mapping(uint256 => SpaceShips.Ship) private _lotteryTickets;
 
     constructor(Lottery _lottery, string memory _name, string memory _symbol, string memory _CID) ERC721(_name, _symbol) {
@@ -45,6 +44,9 @@ contract LotteryToken is ERC721Enumerable, Ownable {
         lottery = _lottery;
     }
 
+    /*
+        * Returns the ship data from a tokenId
+    */
     function getShip(uint256 tokenId) public view returns (SpaceShips.Ship memory) {
         return _lotteryTickets[tokenId];
     }
@@ -57,18 +59,28 @@ contract LotteryToken is ERC721Enumerable, Ownable {
         return string(abi.encodePacked("ipfs://", CID, "/collection-metadata.json"));
     }
 
+    /*
+        * Returns the token URI
+    */
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "ERC721URIStorage: URI query for nonexistent token");
 
-        SpaceShips.Ship memory ship = _lotteryTickets[tokenId];
-        return string(abi.encodePacked("ipfs://", CID, "/", SpaceShips.toString(ship), ".json"));
+        string memory jsonName;
+        if(lottery.isComplete() && !lottery.isWinningTicket(tokenId)){
+            // Loser ticket
+            jsonName = "destroyed";
+        } else {
+            // Lottery is not complete or ticket is a winner
+            SpaceShips.Ship memory ship = _lotteryTickets[tokenId];
+            jsonName = SpaceShips.toString(ship);
+        }
+        return string(abi.encodePacked("ipfs://", CID, "/", jsonName, ".json"));
     }
 
-    // function _destroySpaceShip(uint256 tokenId) internal {
-    //     _spaceShipDatas[tokenId].isDestroyed = true;
-    //     //TODO: change ifps for destroyed ship , sorry boys !
-    // }
-
+    /*
+        * Allows to mint a new token
+        * Only the owner (the lottery) can call this function
+    */
     function mint(address recipient, SpaceShips.Ship memory spaceShip) public onlyOwner returns(uint256) {
         uint256 tokenId = _tokenIdsCounter.current();
         _safeMint(recipient, tokenId);

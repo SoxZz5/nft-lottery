@@ -3,19 +3,7 @@ pragma solidity ^0.8.9;
 
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
-interface IPriceConsumer {
-    /**
-     * Returns the latest price
-     */
-    function getLatestPrice() external view returns (int);
-
-    /**
-     * Returns the price decimals
-     */
-    function decimals() external view returns (uint8);
-}
-
-contract PriceConsumer is IPriceConsumer {
+contract PriceConsumer {
     AggregatorV3Interface internal _aggregator;
 
     constructor(address feedAddress) {
@@ -47,7 +35,7 @@ contract PriceConsumer is IPriceConsumer {
 contract PriceConsumerMaticUSD is PriceConsumer {
 
     /**
-     * Network: Polygon Mumbai
+     * Network: Polygon
      * Aggregator: MATIC/USD
      * Address (mainnet): 0xAB594600376Ec9fD91F8e885dADF0CE036862dE0
      * Address (testnet): 0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada
