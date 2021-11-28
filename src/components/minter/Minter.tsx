@@ -65,7 +65,7 @@ const Minter: React.FunctionComponent = () => {
         ];
         await minterStore.contract.participate(shipParamsArray, {
           from: account,
-          value: BigNumber.from(priceFeed.toString()),
+          value: BigNumber.from("100000000000000000" /*priceFeed.toString()*/),
         });
       } catch (error: any) {
         console.log(error);
