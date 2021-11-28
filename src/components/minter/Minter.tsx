@@ -115,7 +115,7 @@ const Minter: React.FunctionComponent = () => {
             sx={{ fontWeight: "500", fontSize: "2rem", ml: "2rem" }}
             component={"span"}
           >
-            19 $cam Coin
+            19 $
           </Typography>
         </div>
       </div>
