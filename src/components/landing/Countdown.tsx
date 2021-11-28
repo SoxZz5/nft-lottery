@@ -1,16 +1,14 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
-import _moment from "moment";
 import { Typography } from "@mui/material";
 
-const moment = _moment;
-
 const Countdown: React.FunctionComponent = () => {
-  const raffleDate = moment("01/06/2022", "dd/mm/yyyy");
+  const raffleDate = new Date("01/06/2022").getTime();
+  //TODO: Make possible to active coutdown with the lottery smart contract
   const coutdownActive = false;
   const calculateTimeLeft = () => {
-    let now = moment();
-    let difference = raffleDate.diff(now);
+    let now = new Date().getTime();
+    let difference = Math.abs(raffleDate - now);
     let timeLeft: any = {};
     if (difference > 0) {
       timeLeft = {
@@ -45,7 +43,7 @@ const Countdown: React.FunctionComponent = () => {
 
     timerComponents.push(
       <Typography variant={"h4"} color={"white"} fontWeight={"bold"}>
-        {timeLeft[interval]} {interval.slice(0, 1)}
+        {timeLeft[interval]} {interval.slice(0, 1) !== "s" ? ` : ` : ""}
       </Typography>
     );
   });
