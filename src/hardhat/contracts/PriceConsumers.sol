@@ -4,7 +4,7 @@ pragma solidity ^0.8.9;
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 contract PriceConsumer {
-    AggregatorV3Interface internal _aggregator;
+    AggregatorV3Interface private immutable _aggregator;
 
     constructor(address feedAddress) {
         _aggregator = AggregatorV3Interface(feedAddress);
