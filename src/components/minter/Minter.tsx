@@ -53,15 +53,13 @@ const Minter: React.FunctionComponent = () => {
     ? utils.formatEther(BigNumber.from(userEtherBalance.toString())).slice(0, 5)
     : "";
   const mintActive = minterStore.state === 2;
-  const { send, state } = useContractFunction(library, "participate");
   const mintSpaceShip = async (): Promise<void> => {
     if (userStore.connected) {
       try {
         const shipParams = `[["${curShip.body.toString()}", "${curShip.skin.toString()}", "${curShip.weapon.toString()}", "${curShip.booster.toString()}"]]`;
-        console.log(shipParams);
-        console.log(typeof shipParams);
-        await send({ msg: { value: shipParams } });
-        console.log(state);
+        console.log(minterStore.contract.testFunc(0));
+        //console.log(await minterStore.contract);
+        //minterStore.contract.callStatic.participate(shipParams);
       } catch (error: any) {
         console.log(error);
       }

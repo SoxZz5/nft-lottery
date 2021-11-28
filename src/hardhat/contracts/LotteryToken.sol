@@ -13,23 +13,27 @@ library SpaceShips {
   }
 
   struct ShipParts {
-    uint256 body;
-    uint256 skin;
-    uint256 weapon;
-    uint256 booster;
+    string body;
+    string skin;
+    string weapon;
+    string booster;
   }
 
-  function toString(Ship memory ship) internal pure returns (string memory) {
+  function partToString(Ship memory ship)
+    internal
+    pure
+    returns (string memory)
+  {
     return
       string(
         abi.encodePacked(
-          Strings.toString(ship.parts.body),
+          ship.parts.body,
           "_",
-          Strings.toString(ship.parts.skin),
+          ship.parts.skin,
           "_",
-          Strings.toString(ship.parts.weapon),
+          ship.parts.weapon,
           "_",
-          Strings.toString(ship.parts.booster)
+          ship.parts.booster
         )
       );
   }
@@ -96,7 +100,7 @@ contract LotteryToken is ERC721Enumerable, Ownable {
     } else {
       // Lottery is not complete or ticket is a winner
       SpaceShips.Ship memory ship = _lotteryTickets[tokenId];
-      jsonName = SpaceShips.toString(ship);
+      jsonName = SpaceShips.partToString(ship);
     }
     return string(abi.encodePacked("ipfs://", CID, "/", jsonName, ".json"));
   }
