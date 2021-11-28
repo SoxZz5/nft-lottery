@@ -14,10 +14,10 @@ library SpaceShips {
   }
 
   struct ShipParts {
-    string body;
-    string skin;
-    string weapon;
-    string booster;
+    uint256 body;
+    uint256 skin;
+    uint256 weapon;
+    uint256 booster;
   }
 
   function partToString(Ship memory ship)
@@ -28,13 +28,13 @@ library SpaceShips {
     return
       string(
         abi.encodePacked(
-          ship.parts.body,
+          Strings.toString(ship.parts.body),
           "_",
-          ship.parts.skin,
+          Strings.toString(ship.parts.skin),
           "_",
-          ship.parts.weapon,
+          Strings.toString(ship.parts.weapon),
           "_",
-          ship.parts.booster
+          Strings.toString(ship.parts.booster)
         )
       );
   }
