@@ -164,6 +164,7 @@ contract Lottery is VRFConsumerBase {
 
     /*
         * Callback function used by VRF Coordinator
+        * V2: Will be splitted into fulfillRandomness() & shuffle() 
     */
     function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
         Range[] memory mRanges = remainingParticipantsRanges;
@@ -205,7 +206,8 @@ contract Lottery is VRFConsumerBase {
                     max: nextIndex + remainingParticipantsCount - 1
                 }));
             } else {
-                uint secondRangeIndex = (firstRangeIndex + 1) % 2; // If first is 0 will be 1 and vice-versa
+                // If first is 0 will be 1 and vice-versa
+                uint secondRangeIndex = (firstRangeIndex + 1) % 2;
 
                 uint participantsInFirstRange = mRanges[firstRangeIndex].max - nextIndex + 1;
                 uint participantsInSecondRange = remainingParticipantsCount - participantsInFirstRange;
