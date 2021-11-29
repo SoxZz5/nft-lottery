@@ -1,3 +1,5 @@
+@import "./breakpoints";
+
 header {
 }
 
@@ -45,6 +47,54 @@ header {
         color: #f0f !important;
         text-shadow: 0 0 24px #f0f;
       }
+    }
+  }
+
+  @include media("<=tablet") {
+    padding: 1.5rem 0 1rem 0 !important;
+    justify-content: flex-start !important;
+    &_menu {
+      display: none;
+    }
+
+    &_logo {
+      height: 32px;
+
+      .logo-name {
+        height: 32px;
+      }
+    }
+
+    button {
+      font-size: 1rem !important;
+      margin-left: auto !important;
+      margin-right: 1rem !important;
+    }
+  }
+
+  @include media("<=desktop") {
+    padding: 1.5rem 0 1rem 0 !important;
+    justify-content: center !important;
+    &_menu {
+      padding-left: 4rem;
+      a {
+        font-size: 14px !important;
+        margin-left: 1rem !important;
+      }
+    }
+
+    &_logo {
+      height: 32px;
+
+      .logo-name {
+        height: 32px;
+      }
+    }
+
+    button {
+      font-size: 1rem !important;
+      margin-left: auto !important;
+      margin-right: 1rem !important;
     }
   }
 }

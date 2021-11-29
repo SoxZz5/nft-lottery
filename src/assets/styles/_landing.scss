@@ -1,3 +1,4 @@
+@import "./breakpoints";
 @keyframes glowing {
   from {
     box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #f0f, 0 0 50px #0ff,
@@ -32,10 +33,12 @@
     margin-top: -4rem;
     position: relative;
     padding: 2rem;
-    max-width: 550px;
-    width: 550px;
-    height: 550px;
-    max-height: 550px;
+    max-width: 35rem;
+    width: 35rem;
+    height: 35rem;
+    max-height: 35rem;
+    background: #030407;
+    border-radius: 50%;
 
     &::before {
       content: "";
@@ -55,7 +58,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      background: #030407;
       padding: 12rem 2rem;
       border-radius: 50%;
     }
@@ -99,13 +101,6 @@
     &.notActive {
       & > * {
         position: relative;
-        /*-webkit-animation: textglowing 1s ease-in-out infinite alternate;
-        -moz-animation: textglowing 1s ease-in-out infinite alternate;
-        animation: textglowing 1s ease-in-out infinite alternate;*/
-        /*-webkit-animation: glowing 2s ease-in-out infinite alternate;
-        -moz-animation: glowing 2s ease-in-out infinite alternate;
-        animation: glowing 2s ease-in-out infinite alternate;*/
-        //text-shadow: 0 0px 6px rgba(white, 1);
         text-shadow: 0 0 24px rgba(#ff00ff, 1);
       }
     }
@@ -113,10 +108,105 @@
     & > div {
       display: flex;
       flex-direction: row;
+      margin-top: 1rem;
       & > * {
         font-size: 2.5rem;
         margin-left: 1rem !important;
         text-shadow: 0 0 24px rgba(#ff00ff, 1);
+      }
+    }
+  }
+
+  @include media("<=desktop") {
+    &_solar {
+      max-width: 15rem;
+      width: 15rem;
+      height: 15rem;
+      max-height: 15rem;
+      margin-top: -5rem !important;
+
+      &-content {
+        h1 {
+          font-size: 1.125rem !important;
+        }
+      }
+    }
+
+    &_countdown {
+      h4 {
+        font-size: 1.125rem !important;
+      }
+
+      & > div {
+        & > * {
+          margin-left: 0.25rem !important;
+        }
+      }
+    }
+
+    &_info {
+      width: 100% !important;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      bottom: 5rem;
+      h3 {
+        font-size: 1.5rem;
+      }
+      h6 {
+        font-size: 1rem;
+      }
+    }
+
+    &_subtitle {
+      &-text {
+        & > * {
+          font-size: 1rem !important;
+        }
+      }
+    }
+  }
+
+  @include media("<=tablet") {
+    &_solar {
+      max-width: 20rem;
+      width: 20rem;
+      height: 20rem;
+      max-height: 20rem;
+      margin-top: -15rem !important;
+
+      &-content {
+        h1 {
+          font-size: 1.125rem !important;
+        }
+      }
+    }
+
+    &_countdown {
+      h4 {
+        font-size: 1.125rem !important;
+      }
+
+      & > div {
+        & > * {
+          margin-left: 0.25rem !important;
+        }
+      }
+    }
+
+    &_info {
+      width: 100% !important;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 2rem;
+    }
+
+    &_subtitle {
+      &-text {
+        & > * {
+          font-size: 1rem !important;
+        }
       }
     }
   }

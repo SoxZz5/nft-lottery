@@ -9,12 +9,22 @@
 @import "./team";
 @import "./navbar";
 @import "./footer";
+@import "./breakpoints";
 
 html {
   font-family: "Orbitron", sans-serif;
   font-family: "Raleway", sans-serif;
   background-color: #05060b;
   color: white;
+  @include media(">=phone") {
+    font-size: 12px;
+  }
+  @include media(">=tablet") {
+    font-size: 14px;
+  }
+  @include media(">=desktop") {
+    font-size: 16px;
+  }
 }
 
 html,
@@ -45,6 +55,15 @@ body,
   width: 100%;
   display: flex;
   flex-direction: column;
+  @include media(">phone", ">=tablet") {
+    min-height: 150vh;
+  }
+  @include media(">=desktop") {
+    min-height: 100vh;
+  }
+  @include media("<=phone") {
+    min-height: 100vh;
+  }
 }
 
 .matic-icon {
