@@ -17,7 +17,7 @@ const NavBar: React.FunctionComponent = () => {
     { label: "Mint", id: "#minter" },
     //{ label: "Hangar", id: "#hangar" },
     { label: "Roadmap", id: "#roadmap" },
-    //{ label: "Team", id: "#team" },
+    { label: "Team", id: "#team" },
     { label: "White Paper", id: "" },
   ];
   const isActive = (menu: string): any => {
