@@ -1,0 +1,38 @@
+.team {
+  background: #141414;
+  &_content {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 4rem;
+    &-card {
+      margin: 0 5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    &-avatar {
+      width: 10rem;
+      height: 10rem;
+      background-image: linear-gradient(to bottom, #f13122 0%, #36013f 77%);
+      border-radius: 50%;
+      overflow: hidden;
+      & > img {
+        height: 90%;
+        margin-top: 1rem;
+        margin-left: 0.225rem;
+      }
+    }
+    &-links {
+      svg {
+        width: 2rem;
+        height: 2rem;
+        &:hover {
+          color: rgba(white, 0.75) !important;
+          text-shadow: 0 0 12px 0 #f0f;
+        }
+      }
+    }
+  }
+}

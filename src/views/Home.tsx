@@ -11,6 +11,7 @@ const Home: React.FunctionComponent = () => {
       <Landing />
       <Minter />
       <Roadmap />
+      <Team />
     </div>
   );
 };
