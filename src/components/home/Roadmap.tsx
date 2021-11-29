@@ -17,7 +17,7 @@ const Roadmap: React.FunctionComponent = () => {
   const roadmap: RoadmapEl[] = [
     {
       title: "End Development",
-      desc: "We need to end the development of our smartcontract to make it worth it minting :)",
+      desc: "We need to end the development the application development to make the space a better place to be :)",
     },
     {
       title: "Minting Period",
@@ -73,7 +73,7 @@ const Roadmap: React.FunctionComponent = () => {
                 variant={"subtitle1"}
                 component={"span"}
                 sx={{
-                  fontSize: "1.5rem",
+                  fontSize: "1.25rem",
                   fontWeight: "700",
                   lineHeight: "1.5rem",
                 }}

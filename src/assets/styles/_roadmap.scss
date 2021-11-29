@@ -73,9 +73,14 @@
     z-index: 3;
     &_element {
       width: auto;
+      max-width: 65%;
       display: flex;
       flex-direction: column;
       margin-bottom: 3rem;
+
+      & > span {
+        margin-left: 2.5rem;
+      }
       .color-red {
         color: #f13122 !important;
       }
