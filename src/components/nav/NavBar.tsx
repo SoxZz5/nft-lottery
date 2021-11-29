@@ -13,11 +13,11 @@ type Menu = {
 const NavBar: React.FunctionComponent = () => {
   const [curMenu, setCurMenu] = React.useState("#landing");
   const menus: Menu[] = [
-    { label: "About", id: "#landing" },
+    { label: "Home", id: "#landing" },
     { label: "Mint", id: "#minter" },
     //{ label: "Hangar", id: "#hangar" },
     { label: "Roadmap", id: "#roadmap" },
-    { label: "Team", id: "#team" },
+    //{ label: "Team", id: "#team" },
     { label: "White Paper", id: "" },
   ];
   const isActive = (menu: string): any => {
