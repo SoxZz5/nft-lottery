@@ -2,6 +2,7 @@ import { createSvgIcon, Typography } from "@mui/material";
 import * as React from "react";
 import astronaut from "@/assets/images/team/astronaut.png";
 import astronautSoxz from "@/assets/images/team/astronaut-soxz.png";
+import astronautJuicy from "@/assets/images/team/astronaut-juicy.png";
 
 type TeamLink = {
   icon: any;
@@ -86,7 +87,7 @@ const Team: React.FunctionComponent = () => {
     {
       name: "Julien Leprou",
       alias: "Juicy",
-      img: astronaut,
+      img: astronautJuicy,
       desc: `Head of Design, talented UX/UI Designer, decentralized application designer.
 After many years in the blockchain industry, Julien designs the application and the layers that make up the dNFTs.
 He also accompanies the project in the realization of a whitepaper by bringing a glance on the future of the project.`,
