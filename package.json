@@ -18,7 +18,9 @@
     "prepare": "husky install",
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "tsnode": "node --loader ts-node/esm --no-warnings",
+    "test:shuffle": "yarn tsnode ./src/scripts/Shuffle.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.6.0",
