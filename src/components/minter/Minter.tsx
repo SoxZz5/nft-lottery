@@ -101,13 +101,7 @@ const Minter: React.FunctionComponent = () => {
         <Typography
           variant={"h4"}
           component={"h2"}
-          sx={{
-            ml: "2rem",
-            mt: "6.5rem",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
+          sx={{ ml: "4rem", mt: "6.5rem" }}
         >
           MINT YOUR SPACESHIP
         </Typography>
