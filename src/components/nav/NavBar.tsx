@@ -4,7 +4,9 @@ import Link from "@mui/material/Link";
 import ConnectButton from "@/components/nav/ConnectButton";
 import logoName from "@/assets/images/logo-name.png";
 import logoShip from "@/assets/images/logo-ship.png";
+import { saveAs } from "file-saver";
 import whitePaper from "@/assets/whitepaper.pdf";
+import { SaveAltSharp } from "@mui/icons-material";
 type Menu = {
   label: string;
   id: string;
@@ -32,7 +34,8 @@ const NavBar: React.FunctionComponent = () => {
     }
   };
   const downloadLitePaper = (): void => {
-    console.log("DO THE DOWNLOAD LITE PAPER HERE");
+    console.log(whitePaper);
+    saveAs(whitePaper, "SpaceTombo_WhitePaper.pdf");
   };
   return (
     <AppBar className="main-menu" color="transparent">
@@ -44,7 +47,7 @@ const NavBar: React.FunctionComponent = () => {
         {menus.map((menu: Menu, index: number) => {
           const marginLeft = index === 0 ? "6rem" : "4rem";
           const href = menu.id;
-          if (menu.label !== "Lite Paper") {
+          if (menu.label !== "White Paper") {
             return (
               <Link
                 key={index}
@@ -64,8 +67,8 @@ const NavBar: React.FunctionComponent = () => {
               sx={{ ml: marginLeft, cursor: "pointer" }}
               className={`${isActive(menu.id)}`}
               underline="none"
-              href={whitePaper}
-              target="_blank"
+              href="#"
+              onClick={downloadLitePaper}
             >
               {menu.label}
             </Link>
