@@ -1,7 +1,12 @@
 import { Typography } from "@mui/material";
 import { lineHeight } from "@mui/system";
 import * as React from "react";
-import shipImg from "../../assets/images/ship-workspace.png";
+import shipImg from "@/assets/images/ship-workspace.png";
+import genesisA from "@/assets/images/genesis/ship_a.png";
+import genesisB from "@/assets/images/genesis/ship_b.png";
+import genesisC from "@/assets/images/genesis/ship_c.png";
+import genesisD from "@/assets/images/genesis/ship_d.png";
+import genesisE from "@/assets/images/genesis/ship_e.png";
 
 type RoadmapEl = {
   title: string;
@@ -34,14 +39,13 @@ const Roadmap: React.FunctionComponent = () => {
         backgroundPositionX: "50%",
       }}
     >
-      <div
-        className="roadmap-overlay"
-        style={{
-          background: `url("/images/roadmap-overlay.png")`,
-          backgroundSize: "cover",
-          backgroundPositionY: "-75%",
-        }}
-      />
+      <div className="roadmap-overlay">
+        <img src={genesisA} className="genesis-a" />
+        <img src={genesisB} className="genesis-b" />
+        <img src={genesisC} className="genesis-c" />
+        <img src={genesisD} className="genesis-d" />
+        <img src={genesisE} className="genesis-e" />
+      </div>
       <img src={shipImg} className="roadmap-ship" />
       <Typography
         variant={"h4"}
