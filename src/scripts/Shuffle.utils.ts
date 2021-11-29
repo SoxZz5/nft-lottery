@@ -11,7 +11,7 @@ function getNewRandomNumber() {
 /*
     * Returns a human readable string of ranges
 */
-function getRangesToString(ranges: Array<IRange>) {
+function rangesToString(ranges: Array<IRange>) {
     let validRangesStr = "Ranges: " + ranges.length + " ["
     let first = true
     ranges.forEach(e => {
@@ -40,8 +40,16 @@ function getRangesBoundedValuesCount(ranges: Array<IRange>) {
     return "BoundedValuesCount: " + total; 
 }
 
+/*
+    * Logger
+*/
+function log(str: any) {
+    console.log(str);
+}
+
 export {
     getNewRandomNumber,
-    getRangesToString,
-    getRangesBoundedValuesCount
+    rangesToString,
+    getRangesBoundedValuesCount,
+    log
 }

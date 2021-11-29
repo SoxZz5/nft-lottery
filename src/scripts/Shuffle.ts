@@ -1,8 +1,12 @@
 /*
     * Typescript implementation of the shuffle() mechanic in Lottery.sol. 
+    * Run and see log: yarn test:shuffle > shuffle.log
+    * 
     * License: MIT
 */
-import { getRangesToString, getNewRandomNumber, getRangesBoundedValuesCount } from "./Shuffle.utils";
+// TODO Solidity: Implement totalWinners clamp()
+// TODO Solidity: Update pick logic 
+import { rangesToString, getNewRandomNumber, getRangesBoundedValuesCount, log as l } from "./Shuffle.utils";
 
 interface IParticipant {
     //address participant;
@@ -21,106 +25,116 @@ class ShuffleParameters {
     
     constructor(_random:number,
                 _rpCount: number,
-                _rpRanges:Array<IRange>,
+                _rpRanges:Array<IRange>
                 ) {
         this.random = _random;
         this.rpCount = _rpCount;
         this.rpRanges = _rpRanges;
     }
+
+    randomize() {
+        this.random = getNewRandomNumber();
+    }
 }
 
-let totalWinners:number;
+let totalWinners:number = 0;
+let winners: IParticipant[] = [];
 
 // Participants
 let participants: IParticipant[] = [];
-let winners: IParticipant[];
 let shuffleParameters: ShuffleParameters = new ShuffleParameters(0, 0, []);
 
-// Log
-resetValues();
-logn(participants);
-logn("Participants count: " + shuffleParameters.rpCount);
-logn(getRangesToString(shuffleParameters.rpRanges));
+/*
+    * Chainlink VRF mock
+*/
+function fulfillRandomness() {
+    shuffleParameters.randomize();
+    return shuffle(shuffleParameters);
+}
 
 /*
     * Shuffle mechanic implementation
     * Optional parameters can be used to reproduce a specific shuffle behavior during debugging
 */
 function shuffle(p: ShuffleParameters) {
-    logn("\nHalving..." + " RND=" + p.random 
-                        + " " + getRangesToString(p.rpRanges)
-                        + " rpCount=" + p.rpCount);
-    
-    p.rpCount = Math.floor(p.rpCount / 2);
-    if(p.rpCount < totalWinners) {
-        logn("Can't halve anymore");
-        // Can not halve anymore. In this case, the ranges are only shuffled.
-        // The result is that 1st, 2nd, 3rd place are shuffled.
-        p.rpCount = totalWinners;
+    let remainingParticipantsCount = p.rpCount;
+    if(remainingParticipantsCount == totalWinners) {
+        // Nothing to do here. The remaining participants
+        // count equals the total number of expected winners
+        return false;
     }
+
+    l("\nHalving..." + " RND=" + p.random 
+                        + " " + rangesToString(p.rpRanges)
+                        + " rpCount=" + p.rpCount);
+
+    let newRemainingParticipantsCount = Math.floor(remainingParticipantsCount / 2);
+    if(newRemainingParticipantsCount < totalWinners) {
+        l("Can't halve anymore");
+        // Can not halve anymore, only reducing participants count to totalWinners
+        remainingParticipantsCount = totalWinners;
+    } else {
+        remainingParticipantsCount = newRemainingParticipantsCount;
+    }
+    p.rpCount = remainingParticipantsCount; // Update
 
     if(p.rpRanges.length == 1) {
 
-        //let nextIndex = 26;
         let nextIndex = p.random % (p.rpRanges[0].max - p.rpRanges[0].min + 1) + p.rpRanges[0].min;
+        l("Case 1. nextIndex=" + nextIndex + ", remainingParticipantsCount=" + remainingParticipantsCount);
 
-        logn("Case 1. nextIndex=" + nextIndex);
-
-        if(nextIndex + p.rpCount - 1 <= p.rpRanges[0].max) {
-            logn("Case 1.a");
+        if(nextIndex + remainingParticipantsCount - 1 <= p.rpRanges[0].max) {
+            l("Case 1.a");
             p.rpRanges = [{
                 min: nextIndex, 
-                max: nextIndex + p.rpCount - 1
+                max: nextIndex + remainingParticipantsCount - 1
             }];
         }
         else {
-            logn("Case 1.b");
+            l("Case 1.b");
             p.rpRanges = [{
                 min: nextIndex,
                 max: p.rpRanges[0].max
             },
             {
                 min: p.rpRanges[0].min,
-                max: p.rpRanges[0].min + (p.rpCount - 1) - (p.rpRanges[0].max - nextIndex + 1)
+                max: p.rpRanges[0].min + (remainingParticipantsCount - 1) - (p.rpRanges[0].max - nextIndex + 1)
             }];
         }
     } else {
-        //const firstRangeIndex = 1;
-        //let nextIndex = 0;
-
         const firstRangeIndex = p.random % 2;
         let nextIndex = p.random % (p.rpRanges[firstRangeIndex].max - p.rpRanges[firstRangeIndex].min + 1) + p.rpRanges[firstRangeIndex].min;
-
-        logn("Case 2. nextIndex=" + nextIndex);
+        l("Case 2. nextIndex=" + nextIndex + ", remainingParticipantsCount=" + remainingParticipantsCount);
         
-        if(nextIndex + p.rpCount - 1 <= p.rpRanges[firstRangeIndex].max) {
-            logn("Case 2.a");
+        if(nextIndex + remainingParticipantsCount - 1 <= p.rpRanges[firstRangeIndex].max) {
+            l("Case 2.a");
             p.rpRanges = [{
                 min: nextIndex, 
-                max: nextIndex + p.rpCount - 1
+                max: nextIndex + remainingParticipantsCount - 1
             }];
         }
         else {
-            logn("Case 2.b");
-            //logn(getValidRangesStr());
-            //logn(getValidRangesTotal());
-            //logn("nextIndex: " + nextIndex);
+            l("Case 2.b");
         
             // If first is 0 will be 1 and vice-versa
             const secondRangeIndex = (firstRangeIndex + 1) % 2;
 
             let participantsInFirstRange = p.rpRanges[firstRangeIndex].max - nextIndex + 1;
-            let participantsInSecondRange = p.rpCount - participantsInFirstRange;
-            let secondRangeMaxIndex = p.rpRanges[secondRangeIndex].min + participantsInSecondRange - 1;
-            if(secondRangeMaxIndex >= participants.length) {
-                let surplus = secondRangeMaxIndex + 1 - participants.length;
-                nextIndex -= surplus;
-                //participantsInFirstRange += surplus;
-                //participantsInSecondRange -= surplus;
+            let nextParticipantsInSecondRange = remainingParticipantsCount - participantsInFirstRange;
+            let currentParticipantsInSecondRange = p.rpRanges[secondRangeIndex].max - p.rpRanges[secondRangeIndex].min + 1;
+            let secondRangeSurplus = nextParticipantsInSecondRange - currentParticipantsInSecondRange;
+            
+            let newSecondRangeMaxIndex;
+            if(secondRangeSurplus > 0) {
+                // The number of participants required in the second range is too high
+                // Distribute the surplus to the first range and use the entire second range
+                nextIndex -= secondRangeSurplus;
+                newSecondRangeMaxIndex = p.rpRanges[secondRangeIndex].max;
+            } else {
+                // The number of participants required fits in the second range (no surplus)
+                newSecondRangeMaxIndex = p.rpRanges[secondRangeIndex].min + nextParticipantsInSecondRange - 1;
             }
 
-            //logn("participantsInFirstRange: " + participantsInFirstRange);
-            //logn("participantsInSecondRange: " + participantsInSecondRange);
             p.rpRanges = [
                 {
                     min: nextIndex, 
@@ -128,24 +142,39 @@ function shuffle(p: ShuffleParameters) {
                 },
                 {
                     min: p.rpRanges[secondRangeIndex].min, 
-                    max: p.rpRanges[secondRangeIndex].min + (p.rpCount - 1) - (p.rpRanges[firstRangeIndex].max - nextIndex + 1)
+                    max: newSecondRangeMaxIndex
                 }
             ];
         }
     }
+    return true;
 }
 
 /*
     * Reset values as if no event ever happened 
 */
-function resetValues() {
-    totalWinners = 3;
+function resetValues(_totalWinners: number,
+                    _maxParticipantsCount: number, 
+                    _fixedParticipantsCount: boolean) {
+    totalWinners = _totalWinners;
+
+    let totalParticipants;
+    if(_fixedParticipantsCount) {
+        totalParticipants = _maxParticipantsCount;
+    } else {
+        totalParticipants = Math.floor(Math.random() * _maxParticipantsCount) + 1; // Between the inclusive range [1,_maxParticipantsCount]
+    }
+    
+    if(totalWinners > totalParticipants) {
+        // There can not be more winners than participants
+        totalWinners = totalParticipants;
+    }
 
     participants = [];
-    for (let i = 0; i <= 5000; i++) {
+    for (let i = 1; i <= totalParticipants; i++) {
         participants.push({
             //address: "0x" + index,
-            tokenId: i
+            tokenId: i - 1
         });
     }
 
@@ -157,54 +186,118 @@ function resetValues() {
                                               }]);
 }
 
-function logn(str: any) {
-    console.log(str);
-}
-
-function getWinners() {
+/*
+    * Updates the winners array by randomly picking winners inside the
+    * ranges of remaining participants
+*/
+function updateWinners() {
+    winners = [];
     let log = "";
-    let winnersCount = 0;
-    let ranges = shuffleParameters.rpRanges;
+    let winnersCount = 1;
+    let p = shuffleParameters;
 
-    for (let i = 0; i < ranges.length && winnersCount < totalWinners; i++) {
-        const range = ranges[i];
-        for (let j = range.min; j <= range.max && winnersCount < totalWinners; j++) {
-            const participant = participants[j];
-            logn(participant);
-            logn(j);
-            //log += j + "/" + participant["address"] + " ";
+    let rangeIndex = p.rpRanges.length == 1 ? 0 : p.random % 2;
+    let firstWinnerIndex = p.random % (p.rpRanges[rangeIndex].max - p.rpRanges[rangeIndex].min + 1) + p.rpRanges[rangeIndex].min;
+    winners.push(participants[firstWinnerIndex]); // 1st winner
+
+    if(totalWinners > 1) {
+        // There are more winners to pick
+
+        let nextWinnerIndex = firstWinnerIndex;
+        do {
             winnersCount++;
+            nextWinnerIndex++;
+            if(nextWinnerIndex > p.rpRanges[rangeIndex].max) {
+                // End of the current range reached
+
+                if(p.rpRanges.length == 2) {
+                    // There are two ranges, do a binary inversion 
+                    // on the index to switch to the other range
+                    rangeIndex = (rangeIndex + 1) % 2;
+                }
+
+                // One range: Restart at the beginning of the current range
+                // Two ranges: Continue at the beginning of the other range
+                nextWinnerIndex = p.rpRanges[rangeIndex].min;
+            }
+            winners.push(participants[nextWinnerIndex]); // 2nd, 3rd winners
         }
+        while(winnersCount < totalWinners);
     }
     return "Winners: " + log; 
 }
 
+/*
+    * Returns a human readable string of winners
+*/
+function winnersToString() {
+    updateWinners();
 
-// triggerHalving({ 
-//     validRanges: [[498,499],[0,59]], 
-//     participantsCount: 31, 
-//     nextIndex: 45, 
-//     random: 4905
-// });
-// logn(getValidRangesStr());
-// logn(getValidRangesTotal());
-// logn(getWinners());
-// triggerHalving({ 
-//     random: 9241
-// });
-// logn(getValidRangesStr());
-// logn(getValidRangesTotal());
-// logn(getWinners());
+    let log = "";
+    winners.forEach(winner => {
+        log += winner.tokenId + " ";
+    });
+    return "Winners: " + log; 
+}
 
-for (let i = 0; i < 10000; i++) {
-    resetValues();
-    for (let j = 0; j < 1000; j++) {
-        shuffle(shuffleParameters);
-        logn(getRangesToString(shuffleParameters.rpRanges));
-        logn(getRangesBoundedValuesCount(shuffleParameters.rpRanges));
-        logn(getWinners());
+/*
+    * Run events with randomness. Test function for debugging
+*/
+function runTest() {
+    for (let i = 0; i < 1; i++) {
+        resetValues(3, 15214, true);
+
+        /* DEBUG */
+        // shuffleParameters.random = 7;
+        // shuffleParameters.rpCount = 3;
+        // //shuffleParameters.rpRanges = [{min:0,max:0}];
+        // shuffleParameters.rpRanges = [{min:2,max:2},{min:0,max:1}];
+        // if(totalWinners > shuffleParameters.rpCount) {
+        //     // There can not be more winners than participants
+        //     totalWinners = shuffleParameters.rpCount;
+        // }
+        /* DEBUG */
+
+        for (let j = 0; j < 100; j++) {
+            /* DEBUG */
+            //if(shuffle(shuffleParameters)) {
+            /* DEBUG */
+
+            if(fulfillRandomness()) {
+                l(rangesToString(shuffleParameters.rpRanges));
+                l(getRangesBoundedValuesCount(shuffleParameters.rpRanges));
+                l(winnersToString());
+            }
+        }
     }
 }
+
+/*
+    * Run lots of events with randomness
+*/
+function runExhaustive() {
+    for (let i = 0; i < 100; i++) {
+        // New lottery
+
+        // Initialize the lottery values
+        let totalWinners = 3;
+        let maxParticipantsCount = 25000;
+        resetValues(totalWinners, maxParticipantsCount, false);
+
+        for (let j = 0; j < 200; j++) {
+            // Apply an event
+            
+            if(fulfillRandomness()) {
+                l(rangesToString(shuffleParameters.rpRanges));
+                l(getRangesBoundedValuesCount(shuffleParameters.rpRanges));
+                l(winnersToString());
+            }
+        }
+    }
+}
+
+//runTest();
+runExhaustive();
 
 export type {
     IRange
