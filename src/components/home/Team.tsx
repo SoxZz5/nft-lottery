@@ -48,7 +48,7 @@ const Team: React.FunctionComponent = () => {
       alias: "KonyTech",
       img: astronaut,
       desc: `Experienced engineer transitioning from the video game industry to blockchain and fintech application development.
-      Nicolas, with his strong backend skills,he realizes the smart contract of the lottery and the generation of dNFTs.
+      Nicolas, with his strong backend skills, realizes the smart contract of the lottery and the generation of dNFTs.
       After several years in the video game industry, he is now a blockchain developer`,
       links: [
         {
