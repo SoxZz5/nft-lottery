@@ -16,7 +16,7 @@
     "build:node": "yarn hardhat compile --force",
     "husky:install": "npx --no-install rimraf .husky && npx husky install && npm run hook:install",
     "dev": "vite",
-    "build": "vite build",
+    "build": "yarn build:node && vite build",
     "serve": "vite preview",
     "tsnode": "node --loader ts-node/esm --no-warnings",
     "test:shuffle": "yarn tsnode ./src/scripts/Shuffle.ts"
