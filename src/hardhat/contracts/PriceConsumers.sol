@@ -15,11 +15,11 @@ contract PriceConsumer {
      */
     function getLatestPrice() external view returns (int) {
         (
-            uint80 roundID,
+            /*uint80 roundID*/,
             int price,
-            uint startedAt,
-            uint timeStamp,
-            uint80 answeredInRound
+            /*uint startedAt*/,
+            /*uint timeStamp*/,
+            /*uint80 answeredInRound*/
         ) = _aggregator.latestRoundData();
         return price;
     }

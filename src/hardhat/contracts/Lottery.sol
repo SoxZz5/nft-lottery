@@ -27,6 +27,12 @@ struct ChainlinkVRFData {
     uint fee;
 }
 
+struct Periods {
+    uint beginningOfParticipationPeriod;
+    uint endOfParticipationPeriod;
+    uint endOfPreparationPeriod;
+}
+
 contract Lottery is VRFConsumerBase {
     enum State 
     { 
@@ -40,14 +46,16 @@ contract Lottery is VRFConsumerBase {
     }
 
     uint8 public immutable chainTokenDecimals; // Chain token decimals (ETH, MATIC, ...)
-    uint public immutable entryPriceUsd;
     address payable public immutable fundsReleaseAddress;
     LotteryToken public immutable token;
 
+    // Ticket price in USD
+    // Supports 2 decimals (e.g. 100 for $1, 10 for $0.1, 1 for $0.01)
+    uint public immutable ticketPriceUsd;       
+    uint constant ticketPriceDecimals = 2;
+
     // Periods
-    uint public immutable beginningOfParticipationPeriod;
-    uint public immutable endOfParticipationPeriod;
-    uint public immutable endOfPreparationPeriod;
+    Periods public periods;
 
     // Events
     LotteryEvent[] public events;
@@ -70,14 +78,12 @@ contract Lottery is VRFConsumerBase {
     bool private vrfRequestingRandomness;
     
     constructor(uint8 _chainTokenDecimals,
-                uint _entryPriceUsd, 
+                uint _ticketPriceUsd, 
                 string memory _tokenName,
                 string memory _tokenSymbol,
                 string memory _CID, 
                 address payable _fundsReleaseAddress,
-                uint _beginningOfParticipationPeriod,
-                uint _endOfParticipationPeriod,
-                uint _endOfPreparationPeriod,
+                Periods memory _periods,
                 uint _maxWinners,
                 PriceConsumer _priceConsumer,
                 ChainlinkVRFData memory _vrfData/*,
@@ -86,28 +92,25 @@ contract Lottery is VRFConsumerBase {
                         _vrfData.link)
         {
         // ####### Testing: FOR TESTING PURPOSES ONLY
-        //_beginningOfParticipationPeriod = block.timestamp;
-        //_endOfParticipationPeriod = _beginningOfParticipationPeriod + 60;
-        //_endOfPreparationPeriod = _endOfParticipationPeriod + 60;
         LotteryEvent[2] memory _events = [
             LotteryEvent({
-                timestamp: _endOfPreparationPeriod + 60,
+                timestamp: _periods.endOfPreparationPeriod + 60,
                 description: "Event1"
             }),
             LotteryEvent({
-                timestamp: _endOfPreparationPeriod + 120,
+                timestamp: _periods.endOfPreparationPeriod + 120,
                 description: "Event2"
             })];
         //####### Testing
 
         // Validate periods
-        require(_beginningOfParticipationPeriod > block.timestamp, "Invalid timestamp: beginningOfParticipationPeriod");
-        require(_endOfParticipationPeriod > _beginningOfParticipationPeriod, "Invalid timestamp: endOfParticipationPeriod");
-        require(_endOfPreparationPeriod > _endOfParticipationPeriod, "Invalid timestamp: endOfPreparationPeriod");
+        require(_periods.beginningOfParticipationPeriod > block.timestamp, "Invalid timestamp: beginningOfParticipationPeriod");
+        require(_periods.endOfParticipationPeriod > _periods.beginningOfParticipationPeriod, "Invalid timestamp: endOfParticipationPeriod");
+        require(_periods.endOfPreparationPeriod > _periods.endOfParticipationPeriod, "Invalid timestamp: endOfPreparationPeriod");
 
         // Validate events
         require(_events.length > 0, "No events specified");
-        require(_events[0].timestamp >= _endOfPreparationPeriod, "Invalid timestamp: First event");
+        require(_events[0].timestamp >= _periods.endOfPreparationPeriod, "Invalid timestamp: First event");
         for(uint i = 0; i < _events.length; i++) {
             require(bytes(_events[i].description).length > 0, "Event has no description");
             if(i > 0) {
@@ -128,11 +131,9 @@ contract Lottery is VRFConsumerBase {
         token = new LotteryToken(this, _tokenName, _tokenSymbol, _CID);
 
         chainTokenDecimals = _chainTokenDecimals;
-        entryPriceUsd = _entryPriceUsd;
+        ticketPriceUsd = _ticketPriceUsd;
         fundsReleaseAddress = _fundsReleaseAddress;
-        beginningOfParticipationPeriod = _beginningOfParticipationPeriod;
-        endOfParticipationPeriod = _endOfParticipationPeriod;
-        endOfPreparationPeriod = _endOfPreparationPeriod;
+        periods = _periods;
         maxWinners = _maxWinners;
         priceConsumer = _priceConsumer;
         remainingEventsCount = _events.length;
@@ -176,7 +177,7 @@ contract Lottery is VRFConsumerBase {
         * Callback function used by VRF Coordinator
         * V2: Will be splitted into fulfillRandomness() & shuffle() 
     */
-    function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
+    function fulfillRandomness(bytes32 /*requestId*/, uint256 randomness) internal override {
         Range[] memory mRanges = remainingParticipantsRanges;
         Range[] storage sRanges = remainingParticipantsRanges;
         delete(remainingParticipantsRanges);
@@ -319,15 +320,15 @@ contract Lottery is VRFConsumerBase {
             return State.WaitingForLINK;
         }
 
-        if(block.timestamp < beginningOfParticipationPeriod) {
+        if(block.timestamp < periods.beginningOfParticipationPeriod) {
             return State.WaitingForParticipationPeriod;
         }
 
-        if(block.timestamp < endOfParticipationPeriod) {
+        if(block.timestamp < periods.endOfParticipationPeriod) {
             return State.OngoingParticipationPeriod;
         }
 
-        if(block.timestamp < endOfPreparationPeriod) {
+        if(block.timestamp < periods.endOfPreparationPeriod) {
             return State.OngoingPreparationPeriod;
         }
 
@@ -371,7 +372,7 @@ contract Lottery is VRFConsumerBase {
         uint latestPriceAdjusted = uint(latestPrice) * 10 ** (chainTokenDecimals - priceConsumer.decimals());
 
         // Calculate the token price based on the priceConsumer's token (ETH, MATIC, ...)
-        uint entryPrice = 10 ** (chainTokenDecimals * 2) * entryPriceUsd / latestPriceAdjusted;
+        uint entryPrice = 10 ** (chainTokenDecimals * 2) * ticketPriceUsd / latestPriceAdjusted / (10 ** ticketPriceDecimals);
         return entryPrice;
     }
 
@@ -395,59 +396,4 @@ contract Lottery is VRFConsumerBase {
     function isWinningTicket(uint tokenId) public view returns(bool) {
         return winnersTokenId[tokenId];
     }
-}
-
-/**
-     * Network: Polygon
-     -----------------
-     * VRF Coordinator (mainnet): 0x3d2341ADb2D31f1c5530cDC622016af293177AE0
-     * LINK (mainnet): 0xb0897686c545045aFc77CF20eC7A532E3120E0F1
-     * Key Hash (mainnet): 0xf86195cf7690c55907b2b611ebb7343a6f649bff128701cc542f0569e2c549da
-     * Fee: 0.0001 LINK
-     -----------------
-     * VRF Coordinator (testnet): 0x8C7382F9D8f56b33781fE506E897a4F1e2d17255
-     * LINK (testnet): 0x326C977E6efc84E512bB9C30f76E30c160eD06FB
-     * Key Hash (mainnet): 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4
-     * Fee: 0.0001 LINK
-     -----------------
-     * From: https://docs.chain.link/docs/vrf-contracts/
-*/
-contract LotteryTest is Lottery {
-    constructor() Lottery(18,                                                                   // Current chain token decimals. MATIC/ETH = 18
-                            19,                                                                 // Entry price. TESTING. Should be 19
-                            "Test5424243243",                                                   // Token name
-                            "SS1",                                                              // Token symbol
-                            "bafybeidinazu3rqvapnd2qy55kpa5kj2t32xb5dq3bysrb76ccczv7rdse",  // CID
-                            payable(0xf585378ff2A1DeCb335b4899250b83F46DC5c019), // Charity address
-                            block.timestamp + 60 * 5,    // Participation period starts 5 minutes later
-                            block.timestamp + 60 * 10,   // Preparation period starts 10 minutes later
-                            block.timestamp + 60 * 15,   // Preparation period ends 15 minutes later
-                            3,                           // Max winners
-                            new PriceConsumerMaticUSD(), // Chainlink Price Feed
-                            ChainlinkVRFData({           // Chainlink VRF
-                                coordinator: 0x8C7382F9D8f56b33781fE506E897a4F1e2d17255,
-                                link: 0x326C977E6efc84E512bB9C30f76E30c160eD06FB,
-                                keyHash: 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4,
-                                fee: 0.0001 * 10 ** 18
-                            })) { }
-}
-
-contract LotteryParticipationInfinite is Lottery {
-constructor() Lottery(18,                                                                   // Current chain token decimals. MATIC/ETH = 18
-                        1,                                                                  // Entry price. TESTING. Should be 19
-                        "SpaceTokenName",                                                   // Token name
-                        "STN",                                                              // Token symbol
-                        "bafybeidinazu3rqvapnd2qy55kpa5kj2t32xb5dq3bysrb76ccczv7rdse",  // CID
-                        payable(0xf585378ff2A1DeCb335b4899250b83F46DC5c019), // Charity address
-                        block.timestamp + 1,                // Participation period starts immediatly
-                        block.timestamp + 3600 * 24 * 998,  // Preparation period starts 998 days later
-                        block.timestamp + 3600 * 24 * 999,  // Preparation period ends 999 days later
-                        3,                                  // Max winners
-                        new PriceConsumerMaticUSD(),        // Chainlink Price Feed
-                        ChainlinkVRFData({                  // Chainlink VRF
-                            coordinator: 0x8C7382F9D8f56b33781fE506E897a4F1e2d17255,
-                            link: 0x326C977E6efc84E512bB9C30f76E30c160eD06FB,
-                            keyHash: 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4,
-                            fee: 0.0001 * 10 ** 18
-                        })) { }
 }

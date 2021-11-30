@@ -47,7 +47,7 @@ const Minter: React.FunctionComponent = () => {
     pricedUsd = useContractCall({
       abi: new Interface(LotteryContract.abi),
       address: PolygonChainInfo.contractAddress,
-      method: "entryPriceUsd",
+      method: "ticketPriceUsd",
       args: [],
     });
   }
@@ -83,7 +83,7 @@ const Minter: React.FunctionComponent = () => {
   }, [priceFeed]);
   useEffect(() => {
     if (pricedUsd) {
-      setPriceUsdDisplay(pricedUsd.toString());
+      setPriceUsdDisplay((pricedUsd / 100).toString());
     }
   }, [pricedUsd]);
 

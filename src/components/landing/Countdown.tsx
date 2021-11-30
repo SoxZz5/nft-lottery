@@ -13,27 +13,27 @@ import * as MinterService from "@/services/redux/minter/minter.action";
 
 const Countdown: React.FunctionComponent = () => {
   const dispatch = useDispatch();
-  let stateFeed: any = undefined;
-  let participationDate: any = undefined;
+  let stateFeed: Array<number> = [];
+  let periods: Array<BigNumber> = [];
   if (PolygonChainInfo.contractAddress !== "") {
     stateFeed = useContractCall({
       abi: new Interface(LotteryContract.abi),
       address: PolygonChainInfo.contractAddress,
       method: "getState",
       args: [],
-    });
-    participationDate = useContractCall({
+    }) as Array<number>;
+    periods = useContractCall({
       abi: new Interface(LotteryContract.abi),
       address: PolygonChainInfo.contractAddress,
-      method: "endOfParticipationPeriod",
+      method: "periods",
       args: [],
-    });
+    }) as Array<BigNumber>;
   }
   const [curState, setCurState] = useState("Coming soon");
   const [curEnd, setCurEnd] = useState(moment().valueOf());
   const [countdownActive, setCountdownActive] = useState(false);
   useEffect(() => {
-    if (stateFeed !== undefined) {
+    if (stateFeed && stateFeed.length > 0) {
       setCurState(LotteryState[stateFeed[0]]);
       dispatch(MinterService.setState(stateFeed[0]));
       if (stateFeed[0] >= 2 && stateFeed[0] < 6) {
@@ -44,10 +44,10 @@ const Countdown: React.FunctionComponent = () => {
     }
   }, [stateFeed]);
   useEffect(() => {
-    if (participationDate !== undefined) {
-      setCurEnd(moment.unix(participationDate[0].toString()).valueOf());
+    if (periods && periods.length > 0) {
+      setCurEnd(moment.unix(periods[1].toNumber()).valueOf());
     }
-  }, [participationDate]);
+  }, [periods]);
   const calculateTimeLeft = () => {
     let now = moment().valueOf();
     let difference = Math.abs(curEnd - now);
