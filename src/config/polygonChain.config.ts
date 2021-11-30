@@ -4,7 +4,7 @@ const PolygonChainInfo = {
   hexChaindId: "0x13881",
   rpcUrl: "https://rpc-mumbai.maticvigil.com/",
   blockExplorer: "https://mumbai.polygonscan.com",
-  contractAddress: "0xdC86C14783726C907E8fe3f8335FaAD4dF29025d",
+  contractAddress: "0x212696b56149462aD918921f7fb3700ed3737811",
 };
 
 export default PolygonChainInfo;
