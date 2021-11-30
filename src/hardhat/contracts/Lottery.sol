@@ -39,8 +39,6 @@ contract Lottery is VRFConsumerBase {
         Complete 
     }
 
-    uint8 public constant totalWinners = 3;
-
     uint8 public immutable chainTokenDecimals; // Chain token decimals (ETH, MATIC, ...)
     uint public immutable entryPriceUsd;
     address payable public immutable fundsReleaseAddress;
@@ -60,6 +58,7 @@ contract Lottery is VRFConsumerBase {
     Participant[] public winners;
     mapping(uint => bool) public winnersTokenId;
     Range[] public remainingParticipantsRanges;
+    uint public maxWinners;
     uint private remainingParticipantsCount;
 
     // Chainlink Price Feed
@@ -79,6 +78,7 @@ contract Lottery is VRFConsumerBase {
                 uint _beginningOfParticipationPeriod,
                 uint _endOfParticipationPeriod,
                 uint _endOfPreparationPeriod,
+                uint _maxWinners,
                 PriceConsumer _priceConsumer,
                 ChainlinkVRFData memory _vrfData/*,
                 LotteryEvent[] memory _events*/) 
@@ -121,6 +121,9 @@ contract Lottery is VRFConsumerBase {
             events.push(_events[i]);
         }
 
+        // Validate winners
+        require(_maxWinners >= 1, "The number of winners must be equal to or greater than 1");
+
         // Create lottery token
         token = new LotteryToken(this, _tokenName, _tokenSymbol, _CID);
 
@@ -130,6 +133,7 @@ contract Lottery is VRFConsumerBase {
         beginningOfParticipationPeriod = _beginningOfParticipationPeriod;
         endOfParticipationPeriod = _endOfParticipationPeriod;
         endOfPreparationPeriod = _endOfPreparationPeriod;
+        maxWinners = _maxWinners;
         priceConsumer = _priceConsumer;
         remainingEventsCount = _events.length;
         vrfKeyHash = _vrfData.keyHash;
@@ -153,7 +157,13 @@ contract Lottery is VRFConsumerBase {
 
         // Do this early here to lower the gas used in fulfillRandomness()
         if(nextEventIndex == 0) {
-            // First event
+            // First event. Init winners and remaining participants
+
+            if(maxWinners > participants.length) {
+                // There can not be more winners than participants
+                maxWinners = participants.length;
+            }
+
             remainingParticipantsCount = participants.length;
             remainingParticipantsRanges.push(Range({
                 min: 0,
@@ -172,10 +182,10 @@ contract Lottery is VRFConsumerBase {
         delete(remainingParticipantsRanges);
 
         remainingParticipantsCount /= 2; // 50% halving
-        if(remainingParticipantsCount < totalWinners) {
+        if(remainingParticipantsCount < maxWinners) {
             // Can not halve anymore. In this case, the ranges are only shuffled.
             // The result is that 1st, 2nd, 3rd place are shuffled.
-            remainingParticipantsCount = totalWinners;
+            remainingParticipantsCount = maxWinners;
         }
 
         if(mRanges.length == 1) {
@@ -240,11 +250,6 @@ contract Lottery is VRFConsumerBase {
         }
     }
 
-    uint public valueTest;
-    function testFunc(uint256 value) external {
-        valueTest = value;
-    }
-
     /*
         * Participate in the lottery
         * ####### Testing Args: [[0,0,0,0,0,0]]
@@ -277,9 +282,9 @@ contract Lottery is VRFConsumerBase {
         _releaseFunds();
 
         // Fill winners
-        for(uint i = 0; i < remainingParticipantsRanges.length && winners.length < totalWinners; i++) {
+        for(uint i = 0; i < remainingParticipantsRanges.length && winners.length < maxWinners; i++) {
             Range memory range = remainingParticipantsRanges[i];
-            for(uint j = range.min; j <= range.max && winners.length < totalWinners ; j++) {
+            for(uint j = range.min; j <= range.max && winners.length < maxWinners ; j++) {
                 Participant memory winner = participants[j];
                 winners.push(winner);
                 winnersTokenId[winner.tokenId] = true;
@@ -408,39 +413,41 @@ contract Lottery is VRFConsumerBase {
      * From: https://docs.chain.link/docs/vrf-contracts/
 */
 contract LotteryTest is Lottery {
-    constructor() Lottery(18,                                                            // Current chain token decimals. MATIC/ETH = 18
-                          19,                                                             // Entry price. TESTING. Should be 19
-                        "Test5424243243",                                                // Token name
-                        "SS1",                                                           // Token symbol
-                          "bafybeidinazu3rqvapnd2qy55kpa5kj2t32xb5dq3bysrb76ccczv7rdse", // CID
-                          payable(0xf585378ff2A1DeCb335b4899250b83F46DC5c019), // Charity address
-                          block.timestamp + 60 * 5,  // Participation period starts 5 minutes later
-                          block.timestamp + 60 * 10, // Preparation period starts 10 minutes later
-                          block.timestamp + 60 * 15, // Preparation period ends 15 minutes later
-                          new PriceConsumerMaticUSD(), // Chainlink Price Feed
-                          ChainlinkVRFData({           // Chainlink VRF
-                            coordinator: 0x8C7382F9D8f56b33781fE506E897a4F1e2d17255,
-                            link: 0x326C977E6efc84E512bB9C30f76E30c160eD06FB,
-                            keyHash: 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4,
-                            fee: 0.0001 * 10 ** 18
-                          })) { }
+    constructor() Lottery(18,                                                                   // Current chain token decimals. MATIC/ETH = 18
+                            19,                                                                 // Entry price. TESTING. Should be 19
+                            "Test5424243243",                                                   // Token name
+                            "SS1",                                                              // Token symbol
+                            "bafybeidinazu3rqvapnd2qy55kpa5kj2t32xb5dq3bysrb76ccczv7rdse",  // CID
+                            payable(0xf585378ff2A1DeCb335b4899250b83F46DC5c019), // Charity address
+                            block.timestamp + 60 * 5,    // Participation period starts 5 minutes later
+                            block.timestamp + 60 * 10,   // Preparation period starts 10 minutes later
+                            block.timestamp + 60 * 15,   // Preparation period ends 15 minutes later
+                            3,                           // Max winners
+                            new PriceConsumerMaticUSD(), // Chainlink Price Feed
+                            ChainlinkVRFData({           // Chainlink VRF
+                                coordinator: 0x8C7382F9D8f56b33781fE506E897a4F1e2d17255,
+                                link: 0x326C977E6efc84E512bB9C30f76E30c160eD06FB,
+                                keyHash: 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4,
+                                fee: 0.0001 * 10 ** 18
+                            })) { }
 }
 
 contract LotteryParticipationInfinite is Lottery {
-    constructor() Lottery(18,                                                            // Current chain token decimals. MATIC/ETH = 18
-                          0,                                                             // Entry price. TESTING. Should be 19
-                        "SpaceTokenName",                                                // Token name
-                        "STN",                                                           // Token symbol
-                          "bafybeidinazu3rqvapnd2qy55kpa5kj2t32xb5dq3bysrb76ccczv7rdse", // CID
-                          payable(0xf585378ff2A1DeCb335b4899250b83F46DC5c019), // Charity address
-                        block.timestamp + 1,              // Participation period starts immediatly
-                          block.timestamp + 3600 * 24 * 998, // Preparation period starts 998 days later
-                          block.timestamp + 3600 * 24 * 999, // Preparation period ends 999 days later
-                          new PriceConsumerMaticUSD(), // Chainlink Price Feed
-                          ChainlinkVRFData({           // Chainlink VRF
+constructor() Lottery(18,                                                                   // Current chain token decimals. MATIC/ETH = 18
+                        1,                                                                  // Entry price. TESTING. Should be 19
+                        "SpaceTokenName",                                                   // Token name
+                        "STN",                                                              // Token symbol
+                        "bafybeidinazu3rqvapnd2qy55kpa5kj2t32xb5dq3bysrb76ccczv7rdse",  // CID
+                        payable(0xf585378ff2A1DeCb335b4899250b83F46DC5c019), // Charity address
+                        block.timestamp + 1,                // Participation period starts immediatly
+                        block.timestamp + 3600 * 24 * 998,  // Preparation period starts 998 days later
+                        block.timestamp + 3600 * 24 * 999,  // Preparation period ends 999 days later
+                        3,                                  // Max winners
+                        new PriceConsumerMaticUSD(),        // Chainlink Price Feed
+                        ChainlinkVRFData({                  // Chainlink VRF
                             coordinator: 0x8C7382F9D8f56b33781fE506E897a4F1e2d17255,
                             link: 0x326C977E6efc84E512bB9C30f76E30c160eD06FB,
                             keyHash: 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4,
                             fee: 0.0001 * 10 ** 18
-                          })) { }
+                        })) { }
 }
