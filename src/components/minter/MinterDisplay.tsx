@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Ship } from "@/components/minter/Minter";
-import minterOptions from "@/components/minter/minterOptions.json";
+import minterOptions from "@/config/minterOptions.json";
 
 const MinterDisplay: React.FunctionComponent<{ ship: Ship }> = ({ ship }) => {
   return (
