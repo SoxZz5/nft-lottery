@@ -2293,9 +2293,9 @@
                 }
               ],
               "contractDependencies": [
-                345,
+                498,
                 469,
-                498
+                345
               ],
               "contractKind": "contract",
               "documentation": null,
@@ -3457,10 +3457,10 @@
               ],
               "contractDependencies": [
                 87,
-                345,
                 426,
-                469,
                 498,
+                469,
+                345,
                 720
               ],
               "contractKind": "contract",
@@ -6411,8 +6411,8 @@
                 }
               ],
               "contractDependencies": [
-                469,
-                498
+                498,
+                469
               ],
               "contractKind": "contract",
               "documentation": null,
@@ -8688,8 +8688,8 @@
               ],
               "contractDependencies": [
                 426,
-                469,
-                498
+                498,
+                469
               ],
               "contractKind": "contract",
               "documentation": "@title Standard ERC20 token\n * @dev Implementation of the basic standard token.\n@dev https://github.com/ethereum/EIPs/issues/20\n@dev Based on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol",
