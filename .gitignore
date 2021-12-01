@@ -33,3 +33,6 @@ src/hardhat/deployments
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+#IPFS JSONs & PNGs generation
+src/assets/ipfs/tmp
