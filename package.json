@@ -19,7 +19,8 @@
     "build": "yarn build:node && vite build",
     "serve": "vite preview",
     "tsnode": "node --loader ts-node/esm --no-warnings",
-    "test:shuffle": "yarn tsnode ./src/scripts/Shuffle.ts"
+    "test:shuffle": "yarn tsnode ./src/scripts/Shuffle.ts",
+    "build:ipfs": "yarn tsnode ./src/scripts/ipfs/0_pre_generate.ts && yarn tsnode ./src/scripts/ipfs/1_generate_car_images.ts && yarn tsnode ./src/scripts/ipfs/2_generate_car_metadata.ts && yarn tsnode ./src/scripts/ipfs/3_prepare_upload.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.6.0",

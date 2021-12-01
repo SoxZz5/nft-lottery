@@ -6,11 +6,13 @@ interface MinterOptions {
 }
 
 class MinterPart {
+  name: string; // Used for OpenSea "trait_type"
   basePath: string;
   variants: Array<MinterVariant>;
   
-  constructor(_basePath: string, _variants: Array<MinterVariant>) {
+  constructor(_name: string, _basePath: string, _variants: Array<MinterVariant>) {
     this.basePath = _basePath;
+    this.name = _name;
     this.variants = _variants;
   }
   
@@ -24,7 +26,7 @@ interface MinterVariant {
 }
 
 const options: MinterOptions = {
-  body: new MinterPart("/images/layers/body/body_", 
+  body: new MinterPart("Body", "/images/layers/body/body_", 
   [
     { name: "Bird" },
     { name: "Dart" },
@@ -32,7 +34,7 @@ const options: MinterOptions = {
     { name: "Hawk" },
     { name: "Cobra" }
   ]),
-  skin: new MinterPart("/images/layers/skin/skin_", 
+  skin: new MinterPart("Skin", "/images/layers/skin/skin_", 
   [
     { name: "Candy" },
     { name: "Angel" },
@@ -40,7 +42,7 @@ const options: MinterOptions = {
     { name: "Nightmare" },
     { name: "Cadillac" }
   ]),
-  weapon: new MinterPart("/images/layers/weapon/weapon_", 
+  weapon: new MinterPart("Weapon", "/images/layers/weapon/weapon_", 
   [
     { name: "Hearts" },
     { name: "Torpedos" },
@@ -48,7 +50,7 @@ const options: MinterOptions = {
     { name: "Electromines" },
     { name: "Phasers" }
   ]),
-  booster: new MinterPart("/images/layers/booster/booster_", 
+  booster: new MinterPart("Booster", "/images/layers/booster/booster_", 
   [
     { name: "Aerozine" },
     { name: "Hydrazine" },
