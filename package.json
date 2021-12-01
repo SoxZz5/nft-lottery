@@ -11,13 +11,12 @@
   "homepage": "https://github.com/SoxZz5/nft-lottery#readme",
   "scripts": {
     "test:node": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "npx --no-install rimraf .husky && npx husky install && npm run hook:install",
-    "hook:install": "npx --no-install husky add .husky/commit-msg \"npx --no-install commitlint --edit $1\"",
+    "hook:install": "npx --no-install husky add .husky/commit-msg \"npx --no-install commitlint --edit $1\" && npx --no-install husky add .husky/post-merge \"yarn build:node\"",
     "start:node": "yarn hardhat node",
     "build:node": "yarn hardhat compile --force",
-    "prepare": "husky install",
+    "husky:install": "npx --no-install rimraf .husky && npx husky install && npm run hook:install",
     "dev": "vite",
-    "build": "vite build",
+    "build": "yarn build:node && vite build",
     "serve": "vite preview",
     "tsnode": "node --loader ts-node/esm --no-warnings",
     "test:shuffle": "yarn tsnode ./src/scripts/Shuffle.ts"
