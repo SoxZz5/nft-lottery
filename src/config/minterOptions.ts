@@ -58,4 +58,4 @@ const options: MinterOptions = {
   ])
 };
 export default options;
-export type { MinterVariant };
+export type { MinterPart, MinterVariant };
