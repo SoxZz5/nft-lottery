@@ -23,7 +23,7 @@ contract LotteryTest is Lottery {
                             19,                                                                 // Entry price. TESTING. Should be 19
                             "Test5424243243",                                                   // Token name
                             "SS1",                                                              // Token symbol
-                            "bafybeidinazu3rqvapnd2qy55kpa5kj2t32xb5dq3bysrb76ccczv7rdse",  // CID
+                            "bafybeia42q2uhfd5erdp76uow4cejkwwdnntgexit36hq2agbqufhrsg3e",  // CID
                             payable(0xf585378ff2A1DeCb335b4899250b83F46DC5c019), // Charity address
                             Periods({
                                 beginningOfParticipationPeriod: block.timestamp + 60 * 5,    // Participation period starts 5 minutes later
@@ -42,10 +42,10 @@ contract LotteryTest is Lottery {
 
 contract LotteryParticipationInfinite is Lottery {
     constructor() Lottery(18,                                                                   // Current chain token decimals. MATIC/ETH = 18
-                            1,                                                                  // Entry price. TESTING. Should be 19
+                            4,                                                                  // Entry price. TESTING. Should be 19
                             "SpaceTokenName",                                                   // Token name
                             "STN",                                                              // Token symbol
-                            "bafybeidinazu3rqvapnd2qy55kpa5kj2t32xb5dq3bysrb76ccczv7rdse",  // CID
+                            "bafybeia42q2uhfd5erdp76uow4cejkwwdnntgexit36hq2agbqufhrsg3e",  // CID
                             payable(0xf585378ff2A1DeCb335b4899250b83F46DC5c019), // Charity address
                             Periods({
                                 beginningOfParticipationPeriod: block.timestamp + 1,                // Participation period starts immediatly

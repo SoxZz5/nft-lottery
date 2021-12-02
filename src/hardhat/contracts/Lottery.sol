@@ -11,7 +11,7 @@ struct LotteryEvent {
 }
 
 struct Participant {
-    //address participant;
+    address wallet;
     uint tokenId;
 }
 
@@ -63,11 +63,21 @@ contract Lottery is VRFConsumerBase {
 
     // Participants
     Participant[] public participants;
-    Participant[] public winners;
-    mapping(uint => bool) public winnersTokenId;
     Range[] public remainingParticipantsRanges;
-    uint public maxWinners;
     uint private remainingParticipantsCount;
+
+    // Winners
+    Participant[] public winners;
+    uint public totalWinners;
+    uint128 private _winnersRandomness;
+
+    // Maps TokenId with rank
+    // 0 is pending or loser, 1 is 1st, ...
+    mapping(uint => uint) public winnersTokenId;
+
+    // Maps participants address and their winning state
+    // False is pending or lost, True is won 
+    mapping(address => bool) public winnersAddresses;
 
     // Chainlink Price Feed
     PriceConsumer public immutable priceConsumer;
@@ -84,7 +94,7 @@ contract Lottery is VRFConsumerBase {
                 string memory _CID, 
                 address payable _fundsReleaseAddress,
                 Periods memory _periods,
-                uint _maxWinners,
+                uint _totalWinners,
                 PriceConsumer _priceConsumer,
                 ChainlinkVRFData memory _vrfData/*,
                 LotteryEvent[] memory _events*/) 
@@ -108,7 +118,7 @@ contract Lottery is VRFConsumerBase {
         require(_periods.endOfParticipationPeriod > _periods.beginningOfParticipationPeriod, "Invalid timestamp: endOfParticipationPeriod");
         require(_periods.endOfPreparationPeriod > _periods.endOfParticipationPeriod, "Invalid timestamp: endOfPreparationPeriod");
 
-        // Validate events
+        // Validate and copy events to storage
         require(_events.length > 0, "No events specified");
         require(_events[0].timestamp >= _periods.endOfPreparationPeriod, "Invalid timestamp: First event");
         for(uint i = 0; i < _events.length; i++) {
@@ -116,16 +126,14 @@ contract Lottery is VRFConsumerBase {
             if(i > 0) {
                 require(_events[i].timestamp > _events[i-1].timestamp, "Events timestamps not in ascending order");
             }
-        }
-
-        // Since the following feature is not yet supported, manually copy the array to storage.
-        // UnimplementedFeatureError: Copying of type struct LotteryEvent memory[] memory to storage not yet supported.
-        for(uint i = 0; i < _events.length; i++) {
+            
+            // Since the following feature is not yet supported, manually copy the array to storage.
+            // UnimplementedFeatureError: Copying of type struct LotteryEvent memory[] memory to storage not yet supported.
             events.push(_events[i]);
         }
 
         // Validate winners
-        require(_maxWinners >= 1, "The number of winners must be equal to or greater than 1");
+        require(_totalWinners >= 1, "The number of winners must be equal to or greater than 1");
 
         // Create lottery token
         token = new LotteryToken(this, _tokenName, _tokenSymbol, _CID);
@@ -134,7 +142,7 @@ contract Lottery is VRFConsumerBase {
         ticketPriceUsd = _ticketPriceUsd;
         fundsReleaseAddress = _fundsReleaseAddress;
         periods = _periods;
-        maxWinners = _maxWinners;
+        totalWinners = _totalWinners;
         priceConsumer = _priceConsumer;
         remainingEventsCount = _events.length;
         vrfKeyHash = _vrfData.keyHash;
@@ -158,11 +166,11 @@ contract Lottery is VRFConsumerBase {
 
         // Do this early here to lower the gas used in fulfillRandomness()
         if(nextEventIndex == 0) {
-            // First event. Init winners and remaining participants
 
-            if(maxWinners > participants.length) {
+            // First event. Init winners and remaining participants
+            if(totalWinners > participants.length) {
                 // There can not be more winners than participants
-                maxWinners = participants.length;
+                totalWinners = participants.length;
             }
 
             remainingParticipantsCount = participants.length;
@@ -175,29 +183,59 @@ contract Lottery is VRFConsumerBase {
 
     /*
         * Callback function used by VRF Coordinator
-        * V2: Will be splitted into fulfillRandomness() & shuffle() 
     */
     function fulfillRandomness(bytes32 /*requestId*/, uint256 randomness) internal override {
+
+        // Event shuffle mechanic
+        _shuffle(randomness);
+
+        vrfRequestingRandomness = false;
+        remainingEventsCount--;
+
+        if(remainingEventsCount == 0) {
+            // Use the first 16 bytes of randomness to generate the winners randomness
+            _winnersRandomness = uint128(bytes16(bytes32(randomness)));
+        }
+
+        // TODO: Emit event
+        // uint nextEventIndex = _getNextEventIndex();
+        // LotteryEvent memory nextEvent = events[nextEventIndex];
+    }
+
+    /*
+        * Randomly halves remaining participants ranges
+    */
+    function _shuffle(uint randomness) private {
+
+        if(remainingParticipantsCount == totalWinners) {
+            // Nothing to do. The remaining participants
+            // count equals the number of expected winners
+            return;
+        }
+
+        remainingParticipantsCount /= 2; // 50% halving per event
+        if(remainingParticipantsCount < totalWinners) {
+            // Can not halve anymore. Only reducing participants count
+            // to the number of expected winners
+            remainingParticipantsCount = totalWinners;
+        }
+
         Range[] memory mRanges = remainingParticipantsRanges;
         Range[] storage sRanges = remainingParticipantsRanges;
         delete(remainingParticipantsRanges);
 
-        remainingParticipantsCount /= 2; // 50% halving
-        if(remainingParticipantsCount < maxWinners) {
-            // Can not halve anymore. In this case, the ranges are only shuffled.
-            // The result is that 1st, 2nd, 3rd place are shuffled.
-            remainingParticipantsCount = maxWinners;
-        }
-
         if(mRanges.length == 1) {
+            // 1.
             uint nextIndex = randomness % (mRanges[0].max - mRanges[0].min + 1) + mRanges[0].min;
 
             if(nextIndex + remainingParticipantsCount - 1 <= mRanges[0].max) {
+                // 1.a
                 sRanges.push(Range({
                     min: nextIndex,
                     max: nextIndex + remainingParticipantsCount - 1
                 }));
             } else {
+                // 1.b
                 sRanges.push(Range({
                     min: nextIndex,
                     max: mRanges[0].max
@@ -208,24 +246,36 @@ contract Lottery is VRFConsumerBase {
                 }));
             }
         } else {
+            // 2.
             uint firstRangeIndex = randomness % 2;
             uint nextIndex = randomness % (mRanges[firstRangeIndex].max - mRanges[firstRangeIndex].min + 1) + mRanges[firstRangeIndex].min;
 
             if(nextIndex + remainingParticipantsCount - 1 <= mRanges[firstRangeIndex].max) {
+                // 2.a
                 sRanges.push(Range({
                     min: nextIndex,
                     max: nextIndex + remainingParticipantsCount - 1
                 }));
             } else {
-                // If first is 0 will be 1 and vice-versa
+                // 2.b
+
+                // If first range index is 0, will be 1 and vice-versa (binary inversion)
                 uint secondRangeIndex = (firstRangeIndex + 1) % 2;
 
                 uint participantsInFirstRange = mRanges[firstRangeIndex].max - nextIndex + 1;
-                uint participantsInSecondRange = remainingParticipantsCount - participantsInFirstRange;
-                uint secondRangeMaxIndex = mRanges[secondRangeIndex].min + participantsInSecondRange - 1;
-                if(secondRangeMaxIndex >= participants.length) {
-                    uint surplus = secondRangeMaxIndex + 1 - participants.length;
-                    nextIndex -= surplus;
+                uint nextParticipantsInSecondRange = remainingParticipantsCount - participantsInFirstRange;
+                uint currentParticipantsInSecondRange = mRanges[secondRangeIndex].max - mRanges[secondRangeIndex].min + 1;
+
+                uint newSecondRangeMaxIndex;
+                if(nextParticipantsInSecondRange > currentParticipantsInSecondRange) {
+                    // The number of participants required in the second range is too high
+                    // Distribute the surplus to the first range and use the entire second range
+                    uint secondRangeSurplus = nextParticipantsInSecondRange - currentParticipantsInSecondRange;
+                    nextIndex -= secondRangeSurplus;
+                    newSecondRangeMaxIndex = mRanges[secondRangeIndex].max;
+                } else {
+                    // The number of participants required fits in the second range (no surplus)
+                    newSecondRangeMaxIndex = mRanges[secondRangeIndex].min + nextParticipantsInSecondRange - 1;
                 }
 
                 sRanges.push(Range({
@@ -234,20 +284,9 @@ contract Lottery is VRFConsumerBase {
                 }));
                 sRanges.push(Range({
                     min: mRanges[secondRangeIndex].min,
-                    max: mRanges[secondRangeIndex].min + (remainingParticipantsCount - 1) - (mRanges[firstRangeIndex].max - nextIndex + 1)
+                    max: newSecondRangeMaxIndex
                 }));
             }
-        }
-
-        vrfRequestingRandomness = false;
-        remainingEventsCount--;
-
-        // TODO: Emit event
-        // uint nextEventIndex = _getNextEventIndex();
-        // LotteryEvent memory nextEvent = events[nextEventIndex];
-
-        if(remainingEventsCount == 0) {
-            triggerCompletion();
         }
     }
 
@@ -256,9 +295,8 @@ contract Lottery is VRFConsumerBase {
         * ####### Testing Args: [[0,0,0,0,0,0]]
     */
     function participate(SpaceShips.Ship memory spaceShip) external payable {
-        // ####### Testing: COMMENT the following line
+        // ####### To perform testing, COMMENT the following line
         require(getState() == State.OngoingParticipationPeriod, "Not currently accepting participants");
-        // ####### Testing
 
         uint entryPrice = getPriceToParticipate();
         require(msg.value >= entryPrice, "Not enough funds to participate. See getPriceToParticipate()");
@@ -268,7 +306,7 @@ contract Lottery is VRFConsumerBase {
 
         // Register participation
         participants.push(Participant({
-            //participant: msg.sender,
+            wallet: msg.sender,
             tokenId: tokenId
         }));
     }
@@ -276,23 +314,67 @@ contract Lottery is VRFConsumerBase {
     /*
         * Releases the funds to the lottery wallet
     */
-    function triggerCompletion() public {
+    function triggerCompletion() external {
         require(getState() == State.WaitingForFundsRelease, "Not currently waiting for funds release");
 
         // Release funds
         _releaseFunds();
 
-        // Fill winners
-        for(uint i = 0; i < remainingParticipantsRanges.length && winners.length < maxWinners; i++) {
-            Range memory range = remainingParticipantsRanges[i];
-            for(uint j = range.min; j <= range.max && winners.length < maxWinners ; j++) {
-                Participant memory winner = participants[j];
-                winners.push(winner);
-                winnersTokenId[winner.tokenId] = true;
-            }
-        }
+        // Set winners
+        _setWinners();
 
         // TODO: Emit completion event
+    }
+
+    /*
+        * Randomly finds and assigns winners with their respective ranks
+    */
+    function _setWinners() private {
+        Range[] memory ranges = remainingParticipantsRanges;
+        uint winnersCount = 1;
+        
+        uint rangeIndex = ranges.length == 1 ? 0 : _winnersRandomness % 2;
+        uint firstWinnerIndex = _winnersRandomness % (ranges[rangeIndex].max - ranges[rangeIndex].min + 1) + ranges[rangeIndex].min;
+        _setWinner(participants[firstWinnerIndex], winnersCount); // 1st winner
+
+        if(totalWinners > 1) {
+
+            // There are more winners to pick
+            uint nextWinnerIndex = firstWinnerIndex;
+            do {
+                winnersCount++;
+                nextWinnerIndex++;
+                if(nextWinnerIndex > ranges[rangeIndex].max) {
+                    // End of the current range reached
+
+                    if(ranges.length == 2) {
+                        // There are two ranges, do a binary inversion 
+                        // on the index to switch to the other range
+                        rangeIndex = (rangeIndex + 1) % 2;
+                    }
+
+                    // One range: Restart at the beginning of the current range
+                    // Two ranges: Continue at the beginning of the other range
+                    nextWinnerIndex = ranges[rangeIndex].min;
+                }
+                _setWinner(participants[nextWinnerIndex], winnersCount); // 2nd, 3rd winners
+            }
+            while(winnersCount < totalWinners);
+        }
+    }
+
+    /*
+        * Sets a participant as a winner with its associated rank
+    */
+    function _setWinner(Participant memory participant, uint rank) private {
+
+        if(winnersAddresses[participant.wallet]) {
+            // Already registered as a winner
+            return;
+        }
+        winners.push(participant);
+        winnersAddresses[participant.wallet] = true;
+        winnersTokenId[participant.tokenId] = rank; // 1 for 1st, 2 for 2nd etc
     }
 
     /*
@@ -394,6 +476,20 @@ contract Lottery is VRFConsumerBase {
         * Returns whether or not the ticket is a winning ticket
     */
     function isWinningTicket(uint tokenId) public view returns(bool) {
-        return winnersTokenId[tokenId];
+        return winnersTokenId[tokenId] > 0;
+    }
+
+    /*
+        * Returns whether or not a specific address is a winner
+    */
+    function isWinner(address addr) public view returns(bool) {
+        return winnersAddresses[addr];
+    }
+
+    /*
+        * Returns whether or not the sender is a winner
+    */
+    function isWinner() public view returns(bool) {
+        return winnersAddresses[msg.sender];
     }
 }

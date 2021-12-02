@@ -4,8 +4,6 @@
     * 
     * License: MIT
 */
-// TODO Solidity: Implement totalWinners clamp()
-// TODO Solidity: Update pick logic 
 import { rangesToString, getNewRandomNumber, getRangesBoundedValuesCount, log as l } from "./Shuffle.utils";
 
 interface IParticipant {
@@ -60,7 +58,7 @@ function shuffle(p: ShuffleParameters) {
     let remainingParticipantsCount = p.rpCount;
     if(remainingParticipantsCount == totalWinners) {
         // Nothing to do here. The remaining participants
-        // count equals the total number of expected winners
+        // count equals the number of expected winners
         return false;
     }
 
@@ -68,13 +66,11 @@ function shuffle(p: ShuffleParameters) {
                         + " " + rangesToString(p.rpRanges)
                         + " rpCount=" + p.rpCount);
 
-    let newRemainingParticipantsCount = Math.floor(remainingParticipantsCount / 2);
-    if(newRemainingParticipantsCount < totalWinners) {
+    remainingParticipantsCount = Math.floor(remainingParticipantsCount / 2);
+    if(remainingParticipantsCount < totalWinners) {
         l("Can't halve anymore");
         // Can not halve anymore, only reducing participants count to totalWinners
         remainingParticipantsCount = totalWinners;
-    } else {
-        remainingParticipantsCount = newRemainingParticipantsCount;
     }
     p.rpCount = remainingParticipantsCount; // Update
 
@@ -116,7 +112,7 @@ function shuffle(p: ShuffleParameters) {
         else {
             l("Case 2.b");
         
-            // If first is 0 will be 1 and vice-versa
+            // If first range index is 0, will be 1 and vice-versa (binary inversion)
             const secondRangeIndex = (firstRangeIndex + 1) % 2;
 
             let participantsInFirstRange = p.rpRanges[firstRangeIndex].max - nextIndex + 1;
@@ -187,10 +183,10 @@ function resetValues(_totalWinners: number,
 }
 
 /*
-    * Updates the winners array by randomly picking winners inside the
+    * Sets the winners array by randomly picking winners inside the
     * ranges of remaining participants
 */
-function updateWinners() {
+function setWinners() {
     winners = [];
     let log = "";
     let winnersCount = 1;
@@ -231,7 +227,7 @@ function updateWinners() {
     * Returns a human readable string of winners
 */
 function winnersToString() {
-    updateWinners();
+    setWinners();
 
     let log = "";
     winners.forEach(winner => {
