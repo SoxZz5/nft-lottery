@@ -7,12 +7,13 @@ module.exports = async ({
     getChainId
 } : HardhatRuntimeEnvironment) => {
     const DECIMALS = '18'
-    const INITIAL_PRICE = '200000000000000000000'
+    const INITIAL_PRICE = '200000000000000000000' // 200 * 10 ** 18
     const { deploy, log } = deployments
     const { deployer } = await getNamedAccounts()
     const chainId = await getChainId()
     // If we are on a local development network, we need to deploy mocks!
     if (+chainId == 31337) {
+        // Local node 
         log("Local network detected! Deploying mocks...")
         const linkToken = await deploy('LinkToken', { from: deployer, log: true })
         await deploy('EthUsdAggregator', {

@@ -4,19 +4,23 @@ const networkConfig = {
     default: {
         name: 'hardhat',
         fee: '100000000000000000',
+        linkToken: '',
         ethUsdPriceFeed: '',
         keyHash: '0x6c3699283bda56ad74f6b855546325b68d482e983852a7a82979cc4807b641f4',
         jobId: '29fa9aa13bf1468788b7cc4a500a45b8',
         fundAmount: "1000000000000000000",
+        vrfCoordinator: '',
         keepersUpdateInterval: "30"
     },
     31337: {
         name: 'localhost',
         fee: '100000000000000000',
+        linkToken: '',
         ethUsdPriceFeed: '',
         keyHash: '0x6c3699283bda56ad74f6b855546325b68d482e983852a7a82979cc4807b641f4',
         jobId: '29fa9aa13bf1468788b7cc4a500a45b8',
         fundAmount: "1000000000000000000",
+        vrfCoordinator: '',
         keepersUpdateInterval: "30"
     },
     42: {
@@ -48,12 +52,18 @@ const networkConfig = {
         ethUsdPriceFeed: '',
         linkToken: '0x514910771af9ca656af840dff83e8264ecf986ca',
         fundAmount: "0",
+        keyHash: '',
+        vrfCoordinator: '',
+        fee: '',
         keepersUpdateInterval: "30"
     },
     5: {
         name: 'goerli',
         ethUsdPriceFeed: '',
         linkToken: '0x326c977e6efc84e512bb9c30f76e30c160ed06fb',
+        keyHash: '',
+        vrfCoordinator: '',
+        fee: '',
         fundAmount: "0"
     },
     80001: {

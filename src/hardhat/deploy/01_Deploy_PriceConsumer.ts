@@ -12,6 +12,7 @@ module.exports = async ({
     const chainId = await getChainId() as keyof typeof networkConfig
     let ethUsdPriceFeedAddress:string
     if (+chainId == 31337) {
+        // Local node 
         const EthUsdAggregator = await deployments.get('EthUsdAggregator')
         ethUsdPriceFeedAddress = EthUsdAggregator.address
     } else {
@@ -23,13 +24,13 @@ module.exports = async ({
     log("deployer: " + deployer)
     log("ethUsdPriceFeedAddress: " + ethUsdPriceFeedAddress)
     log("----------------------------------------------------")
-    const priceFeedSample = await deploy('PriceFeedSample', {
+    const priceConsumer = await deploy('PriceConsumer', {
         from: deployer,
         args: [ethUsdPriceFeedAddress],
         log: true
     })
     log("Run Price Feed contract with command:")
-    log("npx hardhat read-price-feed --contract " + priceFeedSample.address + " --network " + networkConfig[chainId]['name'])
+    log("npx hardhat read-price-feed --contract " + priceConsumer.address + " --network " + networkConfig[chainId]['name'])
     log("----------------------------------------------------")
     
 }
