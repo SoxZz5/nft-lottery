@@ -2,12 +2,43 @@
 pragma solidity ^0.8.9;
 
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
+import "./chainlink/PriceConsumers.sol";
 import "./LotteryToken.sol";
-import "./PriceConsumers.sol";
+
+struct Parameters {
+    uint8 chainCurrencyDecimals;
+    uint ticketPriceUsd;
+    address payable fundsReleaseAddress;
+    uint totalWinners;
+    Token token;
+    Periods periods;
+    LotteryEvent[] events;
+    PriceConsumer priceConsumer;
+    ChainlinkVRFData vrfData;
+}
+
+struct Token {
+    string name;
+    string symbol;
+    string CID;
+}
+
+struct Periods {
+    uint beginningOfParticipationPeriod;
+    uint endOfParticipationPeriod;
+    uint endOfPreparationPeriod;
+}
 
 struct LotteryEvent {
     uint timestamp;
     string description;
+}
+
+struct ChainlinkVRFData {
+    address coordinator;
+    address link;
+    bytes32 keyHash;
+    uint fee;
 }
 
 struct Participant {
@@ -18,19 +49,6 @@ struct Participant {
 struct Range {
     uint min;
     uint max;
-}
-
-struct ChainlinkVRFData {
-    address coordinator;
-    address link;
-    bytes32 keyHash;
-    uint fee;
-}
-
-struct Periods {
-    uint beginningOfParticipationPeriod;
-    uint endOfParticipationPeriod;
-    uint endOfPreparationPeriod;
 }
 
 contract Lottery is VRFConsumerBase {
@@ -87,66 +105,57 @@ contract Lottery is VRFConsumerBase {
     uint public immutable vrfFee;
     bool private vrfRequestingRandomness;
     
-    constructor(uint8 _chainTokenDecimals,
-                uint _ticketPriceUsd, 
-                string memory _tokenName,
-                string memory _tokenSymbol,
-                string memory _CID, 
-                address payable _fundsReleaseAddress,
-                Periods memory _periods,
-                uint _totalWinners,
-                PriceConsumer _priceConsumer,
-                ChainlinkVRFData memory _vrfData/*,
-                LotteryEvent[] memory _events*/) 
-        VRFConsumerBase(_vrfData.coordinator, 
-                        _vrfData.link)
+    constructor(Parameters memory p) 
+            VRFConsumerBase(p.vrfData.coordinator, p.vrfData.link)
         {
         // ####### Testing: FOR TESTING PURPOSES ONLY
-        LotteryEvent[2] memory _events = [
-            LotteryEvent({
-                timestamp: _periods.endOfPreparationPeriod + 60,
-                description: "Event1"
-            }),
-            LotteryEvent({
-                timestamp: _periods.endOfPreparationPeriod + 120,
-                description: "Event2"
-            })];
+        /*if(p.events.length == 0) {
+            events.push(LotteryEvent({
+                    timestamp: p.periods.endOfPreparationPeriod + 60,
+                    description: "Event1"
+                }));
+            events.push(LotteryEvent({
+                    timestamp: p.periods.endOfPreparationPeriod + 120,
+                    description: "Event2"
+                }));
+            p.events = events;
+        }*/
         //####### Testing
 
         // Validate periods
-        require(_periods.beginningOfParticipationPeriod > block.timestamp, "Invalid timestamp: beginningOfParticipationPeriod");
-        require(_periods.endOfParticipationPeriod > _periods.beginningOfParticipationPeriod, "Invalid timestamp: endOfParticipationPeriod");
-        require(_periods.endOfPreparationPeriod > _periods.endOfParticipationPeriod, "Invalid timestamp: endOfPreparationPeriod");
+        require(p.periods.beginningOfParticipationPeriod > block.timestamp, "Invalid timestamp: beginningOfParticipationPeriod");
+        require(p.periods.endOfParticipationPeriod > p.periods.beginningOfParticipationPeriod, "Invalid timestamp: endOfParticipationPeriod");
+        require(p.periods.endOfPreparationPeriod > p.periods.endOfParticipationPeriod, "Invalid timestamp: endOfPreparationPeriod");
 
         // Validate and copy events to storage
-        require(_events.length > 0, "No events specified");
-        require(_events[0].timestamp >= _periods.endOfPreparationPeriod, "Invalid timestamp: First event");
-        for(uint i = 0; i < _events.length; i++) {
-            require(bytes(_events[i].description).length > 0, "Event has no description");
+        require(p.events.length > 0, "No events specified");
+        require(p.events[0].timestamp >= p.periods.endOfPreparationPeriod, "Invalid timestamp: First event");
+        for(uint i = 0; i < p.events.length; i++) {
+            require(bytes(p.events[i].description).length > 0, "Event has no description");
             if(i > 0) {
-                require(_events[i].timestamp > _events[i-1].timestamp, "Events timestamps not in ascending order");
+                require(p.events[i].timestamp > p.events[i-1].timestamp, "Events timestamps not in ascending order");
             }
             
             // Since the following feature is not yet supported, manually copy the array to storage.
             // UnimplementedFeatureError: Copying of type struct LotteryEvent memory[] memory to storage not yet supported.
-            events.push(_events[i]);
+            events.push(p.events[i]);
         }
 
         // Validate winners
-        require(_totalWinners >= 1, "The number of winners must be equal to or greater than 1");
+        require(p.totalWinners >= 1, "The number of winners must be equal to or greater than 1");
 
         // Create lottery token
-        token = new LotteryToken(this, _tokenName, _tokenSymbol, _CID);
+        token = new LotteryToken(this, p.token.name, p.token.symbol, p.token.CID);
 
-        chainTokenDecimals = _chainTokenDecimals;
-        ticketPriceUsd = _ticketPriceUsd;
-        fundsReleaseAddress = _fundsReleaseAddress;
-        periods = _periods;
-        totalWinners = _totalWinners;
-        priceConsumer = _priceConsumer;
-        remainingEventsCount = _events.length;
-        vrfKeyHash = _vrfData.keyHash;
-        vrfFee = _vrfData.fee;
+        chainTokenDecimals = p.chainCurrencyDecimals;
+        ticketPriceUsd = p.ticketPriceUsd;
+        fundsReleaseAddress = p.fundsReleaseAddress;
+        periods = p.periods;
+        totalWinners = p.totalWinners;
+        priceConsumer = p.priceConsumer;
+        remainingEventsCount = p.events.length;
+        vrfKeyHash = p.vrfData.keyHash;
+        vrfFee = p.vrfData.fee;
     }
 
     /*
