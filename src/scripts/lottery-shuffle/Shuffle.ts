@@ -280,12 +280,16 @@ function runExhaustive() {
         let maxParticipantsCount = 25000;
         resetValues(totalWinners, maxParticipantsCount, false);
 
-        for (let j = 0; j < 200; j++) {
+        const maxEvents = 200;
+        for (let j = 0; j < maxEvents; j++) {
             // Apply an event
             
             if(fulfillRandomness()) {
                 l(rangesToString(shuffleParameters.rpRanges));
                 l(getRangesBoundedValuesCount(shuffleParameters.rpRanges));
+            }
+
+            if(j == maxEvents - 1) {
                 l(winnersToString());
             }
         }
