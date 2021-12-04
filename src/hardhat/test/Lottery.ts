@@ -4,6 +4,8 @@ import { ethers, deployments } from 'hardhat';
 import chainBN from "chai-bn";
 import { Lottery } from '../typechain';
 import { networkConfig } from "../config/hardhat-sub-config";
+import { Parameters, Periods, Token, LotteryEvent, ChainlinkVRFData } from "../types/Lottery"
+import { uint8, uint256 } from '../types/Integers';
 chai.use(chainBN(BN))
 
 const createLotteryFixture = deployments.createFixture(async hre => {
@@ -30,44 +32,51 @@ const createLotteryFixture = deployments.createFixture(async hre => {
     //     ethUsdPriceFeedAddress = networkConfig[chainId]['ethUsdPriceFeed']
     // }
     
-    const { deploy, log } = deployments;
-    const result = await deploy('Lottery', {
+    const periods: Periods = {
+        beginningOfParticipationPeriod: new uint256(currentUnixTimeStamp + 100),
+        endOfParticipationPeriod: new uint256(currentUnixTimeStamp + 101),
+        endOfPreparationPeriod: new uint256(currentUnixTimeStamp + 102)
+    };
+    
+    const tokenInfo: Token = {
+        name: "LotteryTokenName",
+        symbol: "LTN",
+        CID: "bafybeia42q2uhfd5erdp76uow4cejkwwdnntgexit36hq2agbqufhrsg3e"
+    };
+    
+    const events: LotteryEvent[] = [
+        {    
+            timestamp: new uint256(currentUnixTimeStamp + 103),
+            description: "Event 1"
+        },
+        {    
+            timestamp: new uint256(currentUnixTimeStamp + 104),
+            description: "Event 2"
+        }
+    ];
+    
+    const vrfData: ChainlinkVRFData = {
+        coordinator: deployedVRFCoordinator.address,
+        link: deployedLINK.address,
+        keyHash: networkConfig[chainId]['keyHash'],
+        fee: new uint256(networkConfig[chainId]['fee'])
+    };
+    
+    const lotteryParameters: Parameters = {
+        chainCurrencyDecimals: new uint8(18),
+        ticketPriceUsd: new uint256(4),
+        fundsReleaseAddress: "0xf585378ff2A1DeCb335b4899250b83F46DC5c019",
+        totalWinners: new uint256(3),
+        token: tokenInfo,
+        periods: periods,
+        events: events,
+        priceConsumer: deployedPriceConsumer.address,
+        vrfData: vrfData
+    };
+    
+    await deployments.deploy('Lottery', {
         from: deployer,
-        args: [
-            [
-                "18",
-                "4",
-                "0xf585378ff2A1DeCb335b4899250b83F46DC5c019",
-                "3",
-                [
-                    "LotteryTokenName",
-                    "LTN",
-                    "bafybeia42q2uhfd5erdp76uow4cejkwwdnntgexit36hq2agbqufhrsg3e"
-                ],
-                [
-                    currentUnixTimeStamp + 100,
-                    currentUnixTimeStamp + 101,
-                    currentUnixTimeStamp + 102
-                ],
-                [
-                    [
-                        currentUnixTimeStamp + 103,
-                        "Event 1"
-                    ],
-                    [
-                        currentUnixTimeStamp + 104,
-                        "Event 1"
-                    ]
-                ],
-                deployedPriceConsumer.address,
-                [
-                    deployedVRFCoordinator.address,
-                    deployedLINK.address,
-                    networkConfig[chainId]['keyHash'],
-                    networkConfig[chainId]['fee']
-                ]
-            ],
-        ],
+        args: [lotteryParameters],
         log: true
     });
 });
