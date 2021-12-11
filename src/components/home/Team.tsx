@@ -48,9 +48,9 @@ const Team: React.FunctionComponent = () => {
       name: "Nicolas Cortella",
       alias: "KonyTech",
       img: astronaut,
-      desc: `Experienced engineer transitioning from the video game industry to blockchain and fintech application development.
-      Nicolas, with his strong backend skills, realizes the smart contract of the lottery and the generation of dNFTs.
-      After several years in the video game industry, he is now a blockchain developer`,
+      desc: `Experienced engineer from the video game industry with a strong background in backend applications development.
+      Nicolas realizes the smart contract, the design of the lottery internal mechanics and the generation of dNFTs.
+      Backend is its playground and web3 its new crush.`,
       links: [
         {
           icon: LinkedinIcon,
@@ -68,7 +68,7 @@ const Team: React.FunctionComponent = () => {
       name: "Lucas Giffard",
       alias: "SoxZz5",
       img: astronautSoxz,
-      desc: `Web engineer, typescipt consultant, lead tech and front-end expert, 
+      desc: `Web engineer, typescript consultant, lead tech and front-end expert, 
       Lucas creates the front-end of the application and the smart contract in collaboration with Nicolas.
       With several years of experience in the web2.0 world, he is now looking to sharpen his skills in web3.0.`,
       links: [
